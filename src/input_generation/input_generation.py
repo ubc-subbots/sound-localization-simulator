@@ -29,11 +29,20 @@ def generate_square_wave(sampling_frequency, square_wave_frequency, measurement_
             t_sample = next(sample_iter)
 
     return np.array(output)
-       
+
+def generate_sine_wave(sampling_frequency, sine_wave_frequency, measurement_period, phase_time):
+    t_sampling = np.linspace(0,
+                             measurement_period,
+                             measurement_period * sampling_frequency)
+    sine_wave_period = 1 / sine_wave_frequency
+    phase = phase_time / (sine_wave_period) * 2 * np.pi
+
+    return np.sin(2 * np.pi * sine_wave_frequency * t_sampling + phase)
+
 Point = namedtuple('Point', ['x', 'y', 'z'])
 
 def generate_hydrophone_response(pinger_location, hydrophone_location, measurement_period,
-                                 square_wave_frequency, carrier_frequency, sampling_frequency):
+                                 sine_wave_frequency, carrier_frequency, sampling_frequency):
 
     c = 1480
     
@@ -42,16 +51,12 @@ def generate_hydrophone_response(pinger_location, hydrophone_location, measureme
                 (pinger_location.z - hydrophone_location.z) ** 2) ** (1/2)
 
     propogation_time = distance / c 
-    sw_phase_time = propogation_time % (1/square_wave_frequency)
+    sw_phase_time = propogation_time % (1/sine_wave_frequency)
     carrier_phase_time = propogation_time % (1/carrier_frequency)
 
-    square_wave = generate_square_wave(sampling_frequency, square_wave_frequency,
+    sine_wave = generate_sine_wave(sampling_frequency, sine_wave_frequency,
                                        measurement_period, sw_phase_time)
     carrier_wave = generate_square_wave(sampling_frequency, carrier_frequency,
                                        measurement_period, carrier_phase_time)
     
-    return square_wave * carrier_wave
-
-        
-
-
+    return sine_wave * carrier_wave
