@@ -1,1 +1,4 @@
 *.pyc
+
+# do not push logs to repo
+log/
