@@ -37,7 +37,7 @@ def generate_square_wave(sampling_frequency, square_wave_frequency, measurement_
 
 ## Generates a sin wave signal that could be fed into the component chain.
 #
-#  @param sampling_frequency    The frequency at which the wave is sampled. Consecutive samples
+# @param sampling_frequency     The frequency at which the wave is sampled. Consecutive samples
 #                               are separated by units of time equalling 1/sample_frequency
 # @param sine_wave_frequency    The frequency with which the wave oscillates. Two wave samples
 #                               separated by units of time equalling 1/sine_wave_frequency will
