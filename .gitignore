@@ -2,3 +2,6 @@
 
 # do not push logs to repo
 log/
+
+# do not push vscode directory to repo
+.vscode/
