@@ -4,6 +4,7 @@
 log/
 
 # do not push vscode directory to repo
+<<<<<<< HEAD
 .vscode/
 
 # do not push environment to repo, just requirements.txt
@@ -12,3 +13,6 @@ env/*
 
 # doxygen directory will give a lot of merge issues. Ignore from repo and just generate locally for now
 docs/doxygen/
+=======
+.vscode/
+>>>>>>> adding gitignore
