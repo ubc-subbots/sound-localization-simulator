@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import numpy as np
 from scipy import optimize
 from simulator_main import sim_config as cfg

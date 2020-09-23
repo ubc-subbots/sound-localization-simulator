@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from components.position_calc import position_calc_utils
 import numpy as np
 from simulator_main import sim_config as cfg
