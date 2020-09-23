@@ -39,3 +39,15 @@ def nelder_mead(func, starting_params, args=()):
 def newton_gauss(func, starting_params, args=()):
     pass
 
+def tdoa_function_3D(pinger_location, hydrophone_location, speed_of_sound):
+    pinger_distance = np.sqrt(pinger_location.r**2 + pinger_location.z**2)
+    delta_z = pinger_location.z - hydrophone_location.z
+    delta_phi = pinger_location.phi - hydrophone_location.phi
+    
+    delta_d = (pinger_location.r**2 + hydrophone_location.r**2 + delta_z**2
+                - 2*pinger_location.r*hydrophone_location.r*np.cos(delta_phi)) ** 1/2
+
+    return pinger_distance - delta_d
+    
+
+    
