@@ -27,6 +27,7 @@ parser.add_argument('-s', '--vary_sensor', action="store_true",
         help = "Vary hydrophone positions.")
 
 args = parser.parse_args()
+config_path = args.config
 logger = logging.getLogger("sim_logger")
 logger.setLevel(args.log_level)
 
