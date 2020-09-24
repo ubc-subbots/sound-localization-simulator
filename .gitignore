@@ -2,3 +2,10 @@
 
 # do not push logs to repo
 log/
+
+# do not push vscode directory to repo
+.vscode/
+
+# do not push environment to repo, just requirements.txt
+env/*
+!env/requirements.txt
