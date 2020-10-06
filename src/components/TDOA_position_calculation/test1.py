@@ -1,3 +1,8 @@
+'''
+Author: Michael Ko
+Purpose: Test file used to evalute input parser, will be deleted after implementation.
+'''
+
 class butterworth_filter:
 
     def __init__(self, initial_data):

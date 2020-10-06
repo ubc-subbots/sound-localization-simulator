@@ -1,7 +1,6 @@
 '''
 USUSLS Simulator
-Module containing all classes and instances used.
-Each class will auto-generate its parameters using the sim_config dictionary.
+Module referencing the component name to it's relative file path in the system.
 Author: Michael Ko
 '''
 '''
