@@ -1,4 +1,4 @@
-from components.position_calc.NLS_position_calc import NLS_position_calc, get_squared_error_sum
+from components.position_calc.NLS_position_calc import NLS_position_calc
 from components.position_calc import position_calc_utils
 from simulator_main import sim_config as cfg
 from sim_utils.common_types import *
