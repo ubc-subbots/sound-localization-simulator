@@ -19,13 +19,12 @@ parser.add_argument('-l', '--log_level', default = "INFO", type = str,
         help = "The level of verbosity with which the simulator will dump logging information")
 
 args = parser.parse_args()
-
-config_path = args.config
 logger = logging.getLogger("sim_logger")
 logger.setLevel(args.log_level)
 
 ##################################################
 # Import Config File Dynamically From File Path
 ##################################################
-import imp
+from importlib import import_module
+sim_config = import_module(args.config)
 
