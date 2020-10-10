@@ -7,7 +7,7 @@ import numpy as np
 from collections import namedtuple
 import sim_config as config
 
-class input_generation:
+class InputGeneration:
     """ Input generation is a simple class for simulating the input to our hydrophones.
         The class as is simply multiplies a square wave by a sine wave. It more accurately
         represents the output of the pinger more than the response of the hydrophone, but for

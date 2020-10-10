@@ -17,3 +17,5 @@ test_config = [
         "Pole_positions" : ["four", "five", "six"]
     }
 ]
+
+c = 1480 # speed of sound in water in m/s
