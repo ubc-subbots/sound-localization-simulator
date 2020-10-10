@@ -6,8 +6,8 @@ Author: Michael Ko
 '''
 
 import importlib
-import sim_config as config
-import components_base
+from sim_utils import sim_config as config
+from sim_utils import components_base
 import sys
 import imp
 
