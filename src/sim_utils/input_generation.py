@@ -74,19 +74,22 @@ class InputGeneration:
         
         return output
 
-    ## Generates a sin wave signal that could be fed into the component chain.
-    #
-    # @param sampling_frequency     The frequency at which the wave is sampled. Consecutive samples
-    #                               are separated by units of time equalling 1/sample_frequency
-    # @param sine_wave_frequency    The frequency with which the wave oscillates. Two wave samples
-    #                               separated by units of time equalling 1/sine_wave_frequency will
-    #                               have the same value
-    # @param measurement_period     The number of time units to generate the wave for
-    # @param phase_time             Number of time units the phase of the wave will be delayed by
-    #
-    # @return   A numpy array length measurement_period * sampling_frequency containing the sine wave
-    #           samples
+
     def __sine_wave(self, sampling_frequency, sine_wave_frequency, measurement_period, phase_time):
+        """
+    Generates a sin wave signal that could be fed into the component chain.
+    
+    @param sampling_frequency     The frequency at which the wave is sampled. Consecutive samples
+                                  are separated by units of time equalling 1/sample_frequency
+    @param sine_wave_frequency    The frequency with which the wave oscillates. Two wave samples
+                                  separated by units of time equalling 1/sine_wave_frequency will
+                                  have the same value
+    @param measurement_period     The number of time units to generate the wave for
+    @param phase_time             Number of time units the phase of the wave will be delayed by
+    
+    @return   A numpy array length measurement_period * sampling_frequency containing the sine wave
+              samples
+        """
         sine_wave_period = 1 / sine_wave_frequency
         phase = phase_time / (sine_wave_period) * 2 * np.pi
         t_sampling = np.linspace(0,
