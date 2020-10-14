@@ -40,12 +40,16 @@ class NLS_position_calc:
         pass
 
 def get_squared_error_sum(pinger_polar_pos, *args):
-    expected_delta_t_vals = [position_calc_utils.tdoa_function_3D(pinger_polar_pos, position, args[0]) 
-        for position in cfg.hydrophone_positions]
+    expected_delta_t_vals = [
+        position_calc_utils.tdoa_function_3D(pinger_polar_pos, position, args[0]) 
+        for position in cfg.hydrophone_positions[1:]
+    ]
+
+    r = pinger_polar_pos[0] if args[0] else np.sqrt(pinger_polar_pos[0]**2 + pinger_polar_pos[1]**2)
     
-    squared_error_sum = sum(
-        [(actual_delta_t - expected_delta_t) ** 2 
-            for (actual_delta_t, expected_delta_t) in zip(args[1:], expected_delta_t_vals)]
-    )
+    squared_error_sum = sum([
+        (actual_delta_t - expected_delta_t) ** 2 + 1e6*np.heaviside(r-50, 0.5)
+        for (actual_delta_t, expected_delta_t) in zip(args[1:], expected_delta_t_vals)
+    ])
 
     return squared_error_sum
