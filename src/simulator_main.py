@@ -28,3 +28,8 @@ logger.setLevel(args.log_level)
 from importlib import import_module
 sim_config = import_module(args.config)
 
+##################################################
+# main Simulation Tasks
+##################################################
+if __name__ == "__main__":
+        pass
