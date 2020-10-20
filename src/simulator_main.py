@@ -17,6 +17,14 @@ parser.add_argument('-c', '--config', default = "default_config", type = str,
 parser.add_argument('-l', '--log_level', default = "INFO", type = str, 
         choices=["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG", "NOTSET"],
         help = "The level of verbosity with which the simulator will dump logging information")
+parser.add_argument('-n', '--vary_noise', action="store_true",
+        help = "Vary noise values.")
+parser.add_argument('-p', '--vary_pinger', action="store_true",
+        help = "Vary true pinger position.")
+parser.add_argument('-g', '--vary_guess', action="store_true",
+        help = "Vary initial guess pinger position.")
+parser.add_argument('-s', '--vary_sensor', action="store_true",
+        help = "Vary hydrophone positions.")
 
 args = parser.parse_args()
 logger = logging.getLogger("sim_logger")
