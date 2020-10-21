@@ -5,7 +5,7 @@
 #  in order to generate the simulation frame output data.
 import numpy as np
 from collections import namedtuple
-import sim_config as config
+import sim_utils.sim_config as config
 
 class InputGeneration:
     """ Input generation is a simple class for simulating the input to our hydrophones.
@@ -18,7 +18,7 @@ class InputGeneration:
             setattr(self, key, initial_data[key])
 
 
-    def __square_wave(self, sampling_frequency, square_wave_frequency,
+    def _square_wave(self, sampling_frequency, square_wave_frequency,
                       measurement_period, phase_time):
         """Creates a square wave. This is used as a box function over a sine wave to turn it off and on.
 
@@ -47,12 +47,12 @@ class InputGeneration:
 
         t_sign_changes = t_sign_changes + phase_time
 
-        t_sign_changes = np.nonzero(t_sign_changes < measurement_period)[0]
+        t_sign_changes = t_sign_changes[t_sign_changes < measurement_period]
 
         return np.array(self.__generate_square_wave(t_sampling, t_sign_changes))
 
     def __generate_square_wave(self, t_sampling, t_sign_changes):
-        """ Helper function for __square_wave. This function generates an array of 0s and 1s matching a square wave
+        """ Helper function for _square_wave. This function generates an array of 0s and 1s matching a square wave
             with the given sampling times and sign change times.
 
             @param t_sampling       The times that the function samples the square wave at
@@ -75,20 +75,20 @@ class InputGeneration:
         return output
 
 
-    def __sine_wave(self, sampling_frequency, sine_wave_frequency, measurement_period, phase_time):
+    def _sine_wave(self, sampling_frequency, sine_wave_frequency, measurement_period, phase_time):
         """
-    Generates a sin wave signal that could be fed into the component chain.
-    
-    @param sampling_frequency     The frequency at which the wave is sampled. Consecutive samples
-                                  are separated by units of time equalling 1/sample_frequency
-    @param sine_wave_frequency    The frequency with which the wave oscillates. Two wave samples
-                                  separated by units of time equalling 1/sine_wave_frequency will
-                                  have the same value
-    @param measurement_period     The number of time units to generate the wave for
-    @param phase_time             Number of time units the phase of the wave will be delayed by
-    
-    @return   A numpy array length measurement_period * sampling_frequency containing the sine wave
-              samples
+        Generates a sin wave signal that could be fed into the component chain.
+        
+        @param sampling_frequency     The frequency at which the wave is sampled. Consecutive samples
+                                      are separated by units of time equalling 1/sample_frequency
+        @param sine_wave_frequency    The frequency with which the wave oscillates. Two wave samples
+                                      separated by units of time equalling 1/sine_wave_frequency will
+                                      have the same value
+        @param measurement_period     The number of time units to generate the wave for
+        @param phase_time             Number of time units the phase of the wave will be delayed by
+        
+        @return   A numpy array length measurement_period * sampling_frequency containing the sine wave
+                  samples
         """
         sine_wave_period = 1 / sine_wave_frequency
         phase = phase_time / (sine_wave_period) * 2 * np.pi
@@ -108,10 +108,10 @@ class InputGeneration:
         sine_wave_phase_time = propogation_time % (1 / self.sine_wave_frequency)
         carrier_phase_time = propogation_time % (1 / self.carrier_frequency)
 
-        sine_wave = self.__sine_wave(self.sampling_frequency, self.sine_wave_frequency,
+        sine_wave = self._sine_wave(self.sampling_frequency, self.sine_wave_frequency,
                                      self.measurement_period, sine_wave_phase_time)
 
-        carrier_wave = self.__square_wave(self.sampling_frequency, self.carrier_frequency,
+        carrier_wave = self._square_wave(self.sampling_frequency, self.carrier_frequency,
                                           self.measurement_period, carrier_phase_time)
         
         return sine_wave * carrier_wave
