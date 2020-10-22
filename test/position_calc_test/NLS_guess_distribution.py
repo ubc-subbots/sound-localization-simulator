@@ -5,22 +5,18 @@ from simulator_main import args
 from sim_utils.common_types import *
 import numpy as np
 import matplotlib.pyplot as plt
-import argparse
 from enum import Enum
 
-# parser = argparse.ArgumentParser(description='NLS Guess Distribution Visualization')
-# parser.add_argument('-n', '--vary_noise', action="store_true",
-#         help = "Vary noise values.")
-# parser.add_argument('-p', '--vary_pinger', action="store_true",
-#         help = "Vary true pinger position.")
-# parser.add_argument('-g', '--vary_guess', action="store_true",
-#         help = "Vary initial guess pinger position.")
-# parser.add_argument('-s', '--vary_sensor', action="store_true",
-#         help = "Vary hydrophone positions.")
-# 
-# args = parser.parse_args()
+# determine which parts run
+vary_noise =        False
+vary_pinger =       False
+vary_guess =        False
+vary_hydrophones =  False
 
 class ChangingVariable(Enum):
+    '''
+    enum to decide the which variable is changing when plotting
+    '''
     Noise = 0,
     HydrophonePositions = 1,
     PingerGuess = 2,
@@ -40,6 +36,18 @@ n_iter = 300
 
 def visualize_NLS_data(pinger_guess, noise_stdev, n_iters, change_var = ChangingVariable.Noise, 
                         plot_error_hist=False):
+    '''
+    @brief visualizes the results of the NLS_position_calc component
+
+    @param pinger_guess     Initial guess for pinger position
+    @param noise_stdev      Standard deviation of gaussian noise injected to time differences
+                            (mean is 0)
+    @param n_iters          Number of noise simulations performed before plotting results
+    @param change_var       provides information about which variable is changing in simulation
+                            run to determine what information gets printed in plot title. Takes
+                            type ChangingVariable enum
+    @param plot_error_hist  flag to determine if to output a histogram of angular and distance error
+    '''
     initial_guess = pinger_guess
     opt_type = OptimizationType.nelder_mead
     component = NLS_position_calc(optimization_type=opt_type, initial_guess=initial_guess)
@@ -109,7 +117,7 @@ if __name__ == "__main__":
     # Noise Variation Only
     #####################################################
 
-    if (args.vary_noise):
+    if (vary_noise):
         change_var = ChangingVariable.Noise
         visualize_NLS_data(PolarPosition(30, 180/CONV_2_DEG), 5, n_iter, change_var)
         visualize_NLS_data(PolarPosition(30, 180/CONV_2_DEG), 1, n_iter, change_var)
@@ -120,7 +128,7 @@ if __name__ == "__main__":
     # Hydrophone Position Variation Only
     #####################################################
 
-    if (args.vary_sensor):
+    if (vary_hydrophones):
         change_var = ChangingVariable.HydrophonePositions
         visualize_NLS_data(PolarPosition(30, 180/CONV_2_DEG), 1, n_iter, change_var)
 
@@ -168,7 +176,7 @@ if __name__ == "__main__":
     # Pinger Guess Position Variation Only
     #####################################################
 
-    if (args.vary_guess):
+    if (vary_guess):
         change_var = ChangingVariable.PingerGuess
         visualize_NLS_data(PolarPosition(15, 180/CONV_2_DEG), 1, n_iter, change_var)
         visualize_NLS_data(PolarPosition(0, 0/CONV_2_DEG), 1, n_iter, change_var)
@@ -179,7 +187,7 @@ if __name__ == "__main__":
     # Pinger True Position Variation Only
     #####################################################
 
-    if (args.vary_pinger):
+    if (vary_pinger):
         change_var = ChangingVariable.PingerPosition
 
         cfg.pinger_position = CylindricalPosition(15, np.pi/4, 0)
