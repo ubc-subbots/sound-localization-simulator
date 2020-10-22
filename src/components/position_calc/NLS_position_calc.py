@@ -25,9 +25,9 @@ class NLS_position_calc:
         elif (self.optimization_type == OptimizationType.gradient_descent):
             pinger_pos = position_calc_utils.gradient_descent(get_squared_error_sum, 
                             self.initial_guess, args=args)
-        else:
-            pinger_pos = position_calc_utils.newton_gauss(get_squared_error_sum, 
-                            self.initial_guess, args=args)
+        # else:
+        #     pinger_pos = position_calc_utils.newton_gauss(get_squared_error_sum, 
+        #                     self.initial_guess, args=args)
 
         if(self.is_polar):
             return CylindricalPosition(pinger_pos[0], pinger_pos[1], cfg.pinger_position.z)
