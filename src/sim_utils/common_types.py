@@ -3,6 +3,9 @@ from collections import namedtuple
 import numpy as np
 
 class OptimizationType(Enum):
+    '''
+    enum used to specify optimization method for NLS_position_calc component
+    '''
     nelder_mead = 0
     gradient_descent = 1
     newton_gauss = 2

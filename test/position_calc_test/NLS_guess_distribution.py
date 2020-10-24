@@ -34,6 +34,64 @@ cfg.hydrophone_positions = [
 cfg.pinger_position = CylindricalPosition(15, np.pi/5, 5)
 n_iter = 300
 
+def plot_xy_distribution(x,y, initial_data, change=""):
+    '''
+    @brief  creates a 2D colourplot showing the disribution of solutions found by the NLS 
+            component. Contains information about relative hydrophone position, pinger position,
+            and pinger guess.
+
+    @param x                distribution of x coordinate of NLS solutions
+    @param y                distribution of y coordinate of NLS solutions
+    @param initial_data     Dictionary of initialization data used to construct the NLS component
+    @param change           a string containing information about the variable being altered by 
+                            the script. Passing this allows the titles of multiple plots produced 
+                            by this script to track the current value of the changing variable    
+    '''
+    hx = [cyl_2_cart(pos).x for pos in cfg.hydrophone_positions]
+    hy = [cyl_2_cart(pos).y for pos in cfg.hydrophone_positions]
+
+    f, (ax1, ax2) = plt.subplots(1, 2, figsize=(10,5))
+    
+    h = ax1.hist2d(hx, hy, bins=40,
+            range=[[-5*DISTANCE_CONV["cm"], 5*DISTANCE_CONV["cm"]], [-5*DISTANCE_CONV["cm"], 5*DISTANCE_CONV["cm"]]])
+    ax1.set_xlabel("x (m)")
+    ax1.set_ylabel("y (m)")
+    ax1.set_title("Hydrophone Distribution")
+    f.colorbar(h[3], ax=ax1)
+    
+    h = ax2.hist2d(x, y, density=True, range=[[-50, 50], [-50, 50]], bins=40)
+    ax2.scatter(hx, hy, label="Hydrophone", c = 'white')
+    ax2.scatter(cyl_2_cart(cfg.pinger_position).x, cyl_2_cart(cfg.pinger_position).y, 
+                label="Pinger", c='orange')
+    ax2.scatter(pol_2_cart2d(initial_data["initial_guess"]).x, pol_2_cart2d(initial_data["initial_guess"]).y, 
+                label="Position Guess", c = 'red')
+    ax2.set_xlabel("x (m)")
+    ax2.set_ylabel("y (m)")
+    ax2.set_title("Distribution for NLS Position Predictions" + change)
+    ax2.legend(loc='lower left')
+    f.colorbar(h[3], ax=ax2)
+
+def plot_error_histograms(r_err, phi_err, change):
+    '''
+    @brief plots a histogram of error distribution in r and phi
+
+    @param r_err    list of errors in r (xy plane radial distance error)
+    @param phi_err  list of errors in phi (xy plane angular error)
+    @param change   a string containing information about the variable being altered by the 
+                    script. Passing this allows the titles of multiple plots produced by this
+                    script to track the current value of the changing variable
+    '''
+    f, (ax1, ax2) = plt.subplots(1, 2, sharey=True)
+    f.suptitle("NLS Error Distribution" + change)
+    ax1.hist(r_err, histtype='step', density=True)
+    ax1.set_title("Radial Distance Error")
+    ax1.set_xlabel(r'$\Delta r$ (m)')
+    ax1.set_ylabel("Normalized Count")
+    ax2.hist(phi_err, histtype='step', density=True)    
+    ax2.set_title("Angular Error")
+    ax2.set_xlabel(r'$\Delta \phi (^\circ)$')
+
+
 def visualize_NLS_data(pinger_guess, noise_stdev, n_iters, change_var = ChangingVariable.Noise, 
                         plot_error_hist=False):
     '''
@@ -48,13 +106,23 @@ def visualize_NLS_data(pinger_guess, noise_stdev, n_iters, change_var = Changing
                             type ChangingVariable enum
     @param plot_error_hist  flag to determine if to output a histogram of angular and distance error
     '''
-    initial_guess = pinger_guess
-    opt_type = OptimizationType.nelder_mead
-    component = NLS_position_calc(optimization_type=opt_type, initial_guess=initial_guess)
+    initial_data = {
+        "optimization_type" : OptimizationType.nelder_mead,
+        "initial_guess"     : pinger_guess
+    }
+    component = NLS_position_calc(initial_data)
 
-    true_tdoa = tuple(position_calc_utils.tdoa_function_3D(
-                np.array([cfg.pinger_position.r, cfg.pinger_position.phi]), hydrophone_position, True)
-                for hydrophone_position in cfg.hydrophone_positions[1:])
+    def _true_time_of_arrival(hydrophone_position):
+        return position_calc_utils.tdoa_function_3D(
+            np.array([cfg.pinger_position.r, cfg.pinger_position.phi]),
+            hydrophone_position,
+            True
+        )
+
+    true_tdoa = tuple(
+        _true_time_of_arrival(hydrophone_position)
+        for hydrophone_position in cfg.hydrophone_positions[1:]
+    )
 
     NLS_outputs = []
     for i in range(n_iters):
@@ -78,39 +146,10 @@ def visualize_NLS_data(pinger_guess, noise_stdev, n_iters, change_var = Changing
         change = " Pinger Position: r=" + str(round(cfg.pinger_position.r,1)) + " " + r'$\phi =$' + str(round(cfg.pinger_position.phi*CONV_2_DEG,1)) + " " + "z=" + str(round(cfg.pinger_position.z,1))
 
     if (plot_error_hist):
-        f, (ax1, ax2) = plt.subplots(1, 2, sharey=True)
-        f.suptitle("NLS Error Distribution" + change)
-        ax1.hist(r_err, histtype='step', density=True)
-        ax1.set_title("Radial Distance Error")
-        ax1.set_xlabel(r'$\Delta r$ (m)')
-        ax1.set_ylabel("Normalized Count")
-        ax2.hist(phi_err, histtype='step', density=True)    
-        ax2.set_title("Angular Error")
-        ax2.set_xlabel(r'$\Delta \phi (^\circ)$')
+        plot_error_histograms(r_err, phi_err, change)
 
-    hx = [cyl_2_cart(pos).x for pos in cfg.hydrophone_positions]
-    hy = [cyl_2_cart(pos).y for pos in cfg.hydrophone_positions]
+    plot_xy_distribution(x, y, initial_data, change)
 
-    f, (ax1, ax2) = plt.subplots(1, 2, figsize=(10,5))
-    
-    h = ax1.hist2d(hx, hy, bins=40,
-            range=[[-5*DISTANCE_CONV["cm"], 5*DISTANCE_CONV["cm"]], [-5*DISTANCE_CONV["cm"], 5*DISTANCE_CONV["cm"]]])
-    ax1.set_xlabel("x (m)")
-    ax1.set_ylabel("y (m)")
-    ax1.set_title("Hydrophone Distribution")
-    f.colorbar(h[3], ax=ax1)
-    
-    h = ax2.hist2d(x, y, density=True, range=[[-50, 50], [-50, 50]], bins=40)
-    ax2.scatter(hx, hy, label="Hydrophone", c = 'white')
-    ax2.scatter(cyl_2_cart(cfg.pinger_position).x, cyl_2_cart(cfg.pinger_position).y, 
-                label="Pinger", c='orange')
-    ax2.scatter(pol_2_cart2d(initial_guess).x, pol_2_cart2d(initial_guess).y, 
-                label="Position Guess", c = 'red')
-    ax2.set_xlabel("x (m)")
-    ax2.set_ylabel("y (m)")
-    ax2.set_title("Distribution for NLS Position Predictions" + change)
-    ax2.legend(loc='lower left')
-    f.colorbar(h[3], ax=ax2)
 
 if __name__ == "__main__":
     #####################################################
