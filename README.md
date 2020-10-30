@@ -1,2 +1,2 @@
 # Sound-localization-simulator
-We in here
+Better known as project dolphin.
