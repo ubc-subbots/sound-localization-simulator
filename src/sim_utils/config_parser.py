@@ -6,25 +6,23 @@ Author: Michael Ko
 '''
 
 import importlib
-from sim_utils import sim_config as config
 from sim_utils import components_base
-import sys
-import imp
 
-# Instantiate a list to store all objects.
-componentList = []
+def config_parser(sim_config_file):
+    # Instantiate a list to store all objects.
+    componentList = []
+    # Main loop for instantiating objects - will loop through all input file components.
+    for component in sim_config_file:
+        # Extract component name used to identify path file.
+        dataFile = components_base.database[component["Component_name"]]
+        # Match component class file path with name.
+        fileSource = importlib.import_module(dataFile)
+        # Instantiate object and populate relevant parameters.
+        class_ = getattr(fileSource, component["Component_name"])
+        instance = class_(component)
+        # Append to list of objects.
+        componentList.append(instance)
 
-# Main loop for instantiating objects - will loop through all input file components.
-for component in config.test_config:
-    # Extract component name used to identify path file.
-    dataFile = components_base.database[component["Component_name"]]
-    # Match component class file path with name.
-    fileSource = imp.load_source(dataFile[0], dataFile[1])
-    # Instantiate object and populate relevant parameters.
-    class_ = getattr(fileSource, component["Component_name"])
-    instance = class_(component)
-    # Append to list of objects.
-    componentList.append(instance)
-
-# Check output of parser.
-print(componentList)
+    # Check output of parser.
+    print(componentList)
+    return componentList

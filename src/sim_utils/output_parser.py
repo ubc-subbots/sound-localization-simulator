@@ -9,6 +9,7 @@ Author: Michael Ko
 
 import dicttoxml
 from xml.dom.minidom import parseString
+import pickle
 
 # Initialize sample dictionary files to test with.
 # Suggest that for our simulation, we pass a python file containing a dictionary 
@@ -43,9 +44,14 @@ output_test_nested = [
     },
 ]
 
-# Format dictionary to "pretty" XML format.
-xml = dicttoxml.dicttoxml(output_test_nested)
-dom = parseString(xml)
-# Write to output XML file.
-outputFile = open("src\sim_utils\\simResults.xml", "w+")
-outputFile.write(dom.toprettyxml())
+def output_parser(frame_data, pickle_path, xml_path):
+    # Save dictionary to pickle file which will be passed through simulation.
+    with open(pickle_path, 'wb') as fp:
+        pickle.dump(frame_data, fp, protocol=pickle.HIGHEST_PROTOCOL)
+
+    # Format dictionary to "pretty" XML format.
+    xml = dicttoxml.dicttoxml(frame_data)
+    dom = parseString(xml)
+    # Write to output XML file.
+    outputFile = open(xml_path, "w+")
+    outputFile.write(dom.toprettyxml())

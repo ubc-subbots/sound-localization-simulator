@@ -7,12 +7,13 @@ Author: Michael Ko
 from sim_utils.common_types import *
 import numpy as np
 
-test_config = [
+config_dict = [
     {
         "Component_name" : "NLS_position_calc",
         "id" : "NLS1",
         "optimization_method" : OptimizationType.nelder_mead,
         "guessed pinger position" : PolarPosition(20, 0)
+        #"initial_guess" : Cartesian2DPosition(20, 0)
     },
 ]
 

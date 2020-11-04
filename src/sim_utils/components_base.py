@@ -31,6 +31,6 @@ test_config = [
 '''
 
 database = {
-    "butterworth_filter" : ["test1", 'src/components/TDOA_position_calculation/test1.py'],
+    "NLS_position_calc" : 'components.position_calc.NLS_position_calc',
     "cross_correlator" : ["test2", 'src/components/time_difference_calculations/test2.py']
 }
