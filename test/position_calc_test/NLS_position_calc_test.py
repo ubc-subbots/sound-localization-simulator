@@ -29,7 +29,7 @@ true_tdoa = tuple(
     for hydrophone_position in cfg.hydrophone_positions[1:]
 )
 
-noise = [np.random.normal(0, 1*TIME_CONV['us']) for i in range(len(true_tdoa))]
+noise = [np.random.normal(0, 1*UNIT_PREFIX['u']) for i in range(len(true_tdoa))]
 
 tdoa_noisy = [
     tdoa+noise_val 
@@ -86,7 +86,7 @@ predicted_tdoa = tuple(
                 
 print("Noisey Run")
 print("=================")
-print("Noise Values (us): ", [noise_val/TIME_CONV['us'] for noise_val in noise])
+print("Noise Values (us): ", [noise_val/UNIT_PREFIX['u'] for noise_val in noise])
 print("TDOA data: ", tdoa_noisy)
 print("predicted position: ", predicted_position)
 print("predicted TDOA: ", predicted_tdoa)
@@ -171,7 +171,7 @@ predicted_tdoa = tuple(
                 
 print("Noisey Run")
 print("=================")
-print("Noise Values (us): ", [noise_val/TIME_CONV['us'] for noise_val in noise])
+print("Noise Values (us): ", [noise_val/UNIT_PREFIX['u'] for noise_val in noise])
 print("TDOA data: ", tdoa_noisy)
 print("predicted position: ", predicted_position)
 print("predicted TDOA: ", predicted_tdoa)

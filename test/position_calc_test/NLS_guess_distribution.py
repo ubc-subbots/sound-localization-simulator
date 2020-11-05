@@ -26,10 +26,10 @@ class ChangingVariable(Enum):
 cfg.speed_of_sound = 1500 #m/s
 cfg.hydrophone_positions = [
     CylindricalPosition(0, 0, 0),
-    CylindricalPosition(3*DISTANCE_CONV["cm"], -np.pi/2, 0),
-    CylindricalPosition(3*DISTANCE_CONV["cm"], 0, 0),
-    CylindricalPosition(3*DISTANCE_CONV["cm"], np.pi/2, 0),
-    CylindricalPosition(3*DISTANCE_CONV["cm"], np.pi, 0),
+    CylindricalPosition(3*UNIT_PREFIX["centi"], -np.pi/2, 0),
+    CylindricalPosition(3*UNIT_PREFIX["centi"], 0, 0),
+    CylindricalPosition(3*UNIT_PREFIX["centi"], np.pi/2, 0),
+    CylindricalPosition(3*UNIT_PREFIX["centi"], np.pi, 0),
 ]
 cfg.pinger_position = CylindricalPosition(15, np.pi/5, 5)
 n_iter = 300
@@ -53,7 +53,7 @@ def plot_xy_distribution(x,y, initial_data, change=""):
     f, (ax1, ax2) = plt.subplots(1, 2, figsize=(10,5))
     
     h = ax1.hist2d(hx, hy, bins=40,
-            range=[[-5*DISTANCE_CONV["cm"], 5*DISTANCE_CONV["cm"]], [-5*DISTANCE_CONV["cm"], 5*DISTANCE_CONV["cm"]]])
+            range=[[-5*UNIT_PREFIX["centi"], 5*UNIT_PREFIX["centi"]], [-5*UNIT_PREFIX["centi"], 5*UNIT_PREFIX["centi"]]])
     ax1.set_xlabel("x (m)")
     ax1.set_ylabel("y (m)")
     ax1.set_title("Hydrophone Distribution")
@@ -126,7 +126,7 @@ def visualize_NLS_data(pinger_guess, noise_stdev, n_iters, change_var = Changing
 
     NLS_outputs = []
     for i in range(n_iters):
-        noise = [np.random.normal(0, noise_stdev*TIME_CONV['us']) for j in range(len(true_tdoa))]
+        noise = [np.random.normal(0, noise_stdev*UNIT_PREFIX['u']) for j in range(len(true_tdoa))]
         tdoa = [tdoa_val+noise_val for tdoa_val,noise_val in zip(true_tdoa, noise)]
         predicted_pos = component.apply(tdoa)
         NLS_outputs.append(predicted_pos)
@@ -173,20 +173,20 @@ if __name__ == "__main__":
 
         cfg.hydrophone_positions = [
             CylindricalPosition(0, 0, 0),
-            CylindricalPosition(1*DISTANCE_CONV["cm"], -np.pi/2, 0),
-            CylindricalPosition(1*DISTANCE_CONV["cm"], 0, 0),
-            CylindricalPosition(1*DISTANCE_CONV["cm"], np.pi/2, 0),
-            CylindricalPosition(1*DISTANCE_CONV["cm"], np.pi, 0),
+            CylindricalPosition(1*UNIT_PREFIX["centi"], -np.pi/2, 0),
+            CylindricalPosition(1*UNIT_PREFIX["centi"], 0, 0),
+            CylindricalPosition(1*UNIT_PREFIX["centi"], np.pi/2, 0),
+            CylindricalPosition(1*UNIT_PREFIX["centi"], np.pi, 0),
         ]
 
         visualize_NLS_data(PolarPosition(30, 180/CONV_2_DEG), 1, n_iter, change_var)
 
         cfg.hydrophone_positions = [
             CylindricalPosition(0, 0, 0),
-            CylindricalPosition(3*DISTANCE_CONV["cm"], -np.pi/2, 0),
-            CylindricalPosition(0, 0, 3*DISTANCE_CONV["cm"]),
-            CylindricalPosition(3*DISTANCE_CONV["cm"], np.pi/2, 0),
-            CylindricalPosition(0, 0, -3*DISTANCE_CONV["cm"]),
+            CylindricalPosition(3*UNIT_PREFIX["centi"], -np.pi/2, 0),
+            CylindricalPosition(0, 0, 3*UNIT_PREFIX["centi"]),
+            CylindricalPosition(3*UNIT_PREFIX["centi"], np.pi/2, 0),
+            CylindricalPosition(0, 0, -3*UNIT_PREFIX["centi"]),
         ]
 
         visualize_NLS_data(PolarPosition(30, 180/CONV_2_DEG), 1, n_iter, change_var)
@@ -194,10 +194,10 @@ if __name__ == "__main__":
 
         cfg.hydrophone_positions = [
             CylindricalPosition(0, 0, 0),
-            CylindricalPosition(1*DISTANCE_CONV["cm"], -np.pi/2, 0),
-            CylindricalPosition(2*DISTANCE_CONV["cm"], 0, 0),
-            CylindricalPosition(1*DISTANCE_CONV["cm"], np.pi/2, 1*DISTANCE_CONV["cm"]),
-            CylindricalPosition(3*DISTANCE_CONV["cm"], np.pi, -1*DISTANCE_CONV["cm"]),
+            CylindricalPosition(1*UNIT_PREFIX["centi"], -np.pi/2, 0),
+            CylindricalPosition(2*UNIT_PREFIX["centi"], 0, 0),
+            CylindricalPosition(1*UNIT_PREFIX["centi"], np.pi/2, 1*UNIT_PREFIX["centi"]),
+            CylindricalPosition(3*UNIT_PREFIX["centi"], np.pi, -1*UNIT_PREFIX["centi"]),
         ]
 
         visualize_NLS_data(PolarPosition(30, 180/CONV_2_DEG), 1, n_iter, change_var)
@@ -205,10 +205,10 @@ if __name__ == "__main__":
         # reset hydrophone positions
         cfg.hydrophone_positions = [
             CylindricalPosition(0, 0, 0),
-            CylindricalPosition(3*DISTANCE_CONV["cm"], -np.pi/2, 0),
-            CylindricalPosition(3*DISTANCE_CONV["cm"], 0, 0),
-            CylindricalPosition(3*DISTANCE_CONV["cm"], np.pi/2, 0),
-            CylindricalPosition(3*DISTANCE_CONV["cm"], np.pi, 0),
+            CylindricalPosition(3*UNIT_PREFIX["centi"], -np.pi/2, 0),
+            CylindricalPosition(3*UNIT_PREFIX["centi"], 0, 0),
+            CylindricalPosition(3*UNIT_PREFIX["centi"], np.pi/2, 0),
+            CylindricalPosition(3*UNIT_PREFIX["centi"], np.pi, 0),
         ]
 
     #####################################################

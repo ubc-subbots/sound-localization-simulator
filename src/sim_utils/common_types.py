@@ -2,6 +2,16 @@ from enum import Enum
 from collections import namedtuple
 import numpy as np
 
+##################################################################
+# Configuration Enums
+##################################################################
+class QuantizationType(Enum):
+    '''
+    enum used to specifty quanitzation method for ADC
+    '''
+    midrise = 0
+    midtread = 1
+
 class OptimizationType(Enum):
     '''
     enum used to specify optimization method for NLS_position_calc component
@@ -48,26 +58,35 @@ def cart2d_2_pol(cart2d_pos):
 ##################################################################
 # Unit Conversions
 ##################################################################
-TIME_CONV = {
-    "millisecond": 1e-3,
-    "ms": 1e-3,
-    "microsecond": 1e-6,
-    "us": 1e-6,
-    "nanosecond": 1e-9,
-    "ns": 1e-9,
-    "picosecond": 1e-12,
-    "ps": 1e-12
-}
 
 DISTANCE_CONV = {
-    "cm": 1e-2,
-    "centimeter": 1e-3,
-    "millimeter": 1e-3,
-    "mm": 1e-3,
     "feet": 0.3048,
     "ft": 0.3048,
     "inch": 2.54e-2,
     "in": 2.54e-2
+}
+
+UNIT_PREFIX = {
+    "f"     : 1e-15,
+    "femto" : 1e-15,
+    "p"     : 1e-12,
+    "pico"  : 1e-12,
+    "n"     : 1e-9,
+    "nano"  : 1e-9,
+    "u"     : 1e-6,
+    "micro" : 1e-6,
+    "m"     : 1e-3,
+    "milli" : 1e-3,
+    "c"     : 1e-2,
+    "centi" : 1e-2,
+    "k"     : 1e3,
+    "killo" : 1e3,
+    "M"     : 1e6,
+    "mega"  : 1e6,
+    "G"     : 1e9,
+    "giga"  : 1e9,
+    "T"     : 1e12,
+    "tera"  : 1e12
 }
 
 CONV_2_DEG = 180/np.pi

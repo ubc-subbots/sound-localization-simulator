@@ -47,7 +47,7 @@ class NLS_position_calc:
             The initial guess for the XY plane position of the pinger. The function expects an input of 
             type PolarPosition or Cartesian2DPosition, both defined in common_types.py
         '''
-        self.name = initial_data.get("name", "NLS_position_calc")
+        self.name = initial_data.get("id", "NLS 1")
         self.optimization_type = initial_data.get("optimization_type", OptimizationType.nelder_mead)
         initial_guess = initial_data.get("initial_guess", PolarPosition(0,0))
         if (type(initial_guess) == PolarPosition):

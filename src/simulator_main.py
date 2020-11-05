@@ -1,5 +1,6 @@
 '''
 UBC Subbots
+Project Dolphin
 Sound Localization Simulator
 Main Simulation File
 '''
@@ -26,6 +27,11 @@ logger.setLevel(args.log_level)
 ##################################################
 from importlib import import_module
 sim_config = import_module(args.config)
+
+##################################################
+# Construct Stage Chain
+##################################################
+
 
 ##################################################
 # main Simulation Tasks
