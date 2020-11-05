@@ -9,6 +9,15 @@ class ideal_adc:
         for key in initial_data:
             setattr(self, key, initial_data[key])
 
+    def apply(self, sim_signal):
+        sampled_signal = downsample(sim_signal, cfg.continuous_sampling_frequency, cfg.sampling_frequency)
+        quantized_signal = quantize(sampled_signal, self.num_bits, self.quantization_method)
+
+        return quantized_signal
+
+    def write_frame(self, frame):
+        pass
+
 def downsample(signal, fs_old, fs_new):
     index_sample_rate = fs_new / fs_old
     new_length = int(round(index_sample_rate*len(signal)))
