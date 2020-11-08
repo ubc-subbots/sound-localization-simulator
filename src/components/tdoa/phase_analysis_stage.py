@@ -1,8 +1,8 @@
 from simulator_main import sim_config as cfg
-from components.tdoa.phase_analysis import phase_analysis
+from components.tdoa.phase_analysis import PhaseAnalysis
 import numpy as np
 
-class phase_analysis_stage:
+class PhaseAnalysisStage:
 
     def __init__(self, initial_data):
         for key in initial_data:
@@ -34,4 +34,4 @@ class phase_analysis_stage:
         initial_data = stage_initial_data
         initial_data["id"] = "Fourier Phase [" + str(component_index) + "]"
 
-        return phase_analysis(initial_data)
+        return PhaseAnalysis(initial_data)

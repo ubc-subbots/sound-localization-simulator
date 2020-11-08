@@ -7,24 +7,25 @@ Author: Michael Ko
 from sim_utils.common_types import *
 import numpy as np
 
-config_dict = [
+simulation_chain = [
     {
-        "Component_name"        : "input_generation_stage",
-        "measurement_period"    : 1,
-        "duty-cycle"            : 10*UNIT_PREFIX["m"]
+        "Component_name"        : "InputGenerationStage",
+        "id"                    : "Input Generation Stage",
+        "measurement_period"    : 2,
+        "duty-cycle"            : 0.01
     },
     {
-        "Component_name"        : "ideal_ADC_stage",
+        "Component_name"        : "IdealADCStage",
         "id"                    : "ideal ADC stage",
         "num_bits"              : 12,
         "quanitzation_method"   : QuantizationType.midtread
     },
     {
-        "Component_name"        : "phase_analysis",
+        "Component_name"        : "PhaseAnalysisStage",
         "id"                    : "Fourier Phase Stage",
     },
     {
-        "Component_name"        : "NLS_position_calc",
+        "Component_name"        : "NLSPositionCalc",
         "id"                    : "NLS 1",
         "optimization_method"   : OptimizationType.nelder_mead,
         "initial_guess"         : Cartesian2DPosition(20, 0)
@@ -36,6 +37,8 @@ Global Configurations
 '''
 
 speed_of_sound = 1500 #m/s
+
+#### position information ####
 hydrophone_positions = [
     CylindricalPosition(0, 0, 0),
     CylindricalPosition(2e-2, 0, 0),
@@ -44,6 +47,10 @@ hydrophone_positions = [
     CylindricalPosition(1e-2, 1e-2, 1e-2),
 ]
 pinger_position = CylindricalPosition(15, np.pi/5, 5)
-signal_frequency = 40*UNIT_PREFIX["k"]
+
+#### frequency information ####
+signal_frequency = 40e3
+# used as ADC sampling frequency and for "digital" portion
 sampling_frequency = 10*signal_frequency
+# picked to be much higher so it's approximately continuous and can be used in "analog" portion
 continuous_sampling_frequency = 100*signal_frequency

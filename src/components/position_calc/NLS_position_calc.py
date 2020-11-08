@@ -11,7 +11,7 @@ import numpy as np
 from simulator_main import sim_config as cfg
 from sim_utils.common_types import *
 
-class NLS_position_calc:
+class NLSPositionCalc:
     '''
     NLS_position_calc is a class used to model the method of calculating the position of the pinger
     from hydrohpone Time Differece Of Arrival (TDOA) using a Non-linear Least Squares (NLS) solution

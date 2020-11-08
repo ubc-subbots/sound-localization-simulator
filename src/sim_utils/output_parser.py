@@ -44,7 +44,7 @@ output_test_nested = [
     },
 ]
 
-def output_parser(frame_data, pickle_path, xml_path):
+def create_output_file(frame_data, pickle_path, xml_path):
     # Save dictionary to pickle file which will be passed through simulation.
     with open(pickle_path, 'wb') as fp:
         pickle.dump(frame_data, fp, protocol=pickle.HIGHEST_PROTOCOL)

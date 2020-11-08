@@ -2,7 +2,7 @@ import numpy as np
 from simulator_main import sim_config as cfg
 from matplotlib import pyplot as plt
 
-class phase_analysis:
+class PhaseAnalysis:
     
     def __init__(self, initial_data):
         for key in initial_data:
@@ -15,7 +15,7 @@ class phase_analysis:
         return (hydrophone_phase - hydrophone0_phase) / (2*np.pi*cfg.signal_frequency)
 
     def write_frame(self, frame):
-        pass
+        return {}
 
 # I can likely get this without a sampling frequency, but that is a todo:
 def get_phase(input_signal):

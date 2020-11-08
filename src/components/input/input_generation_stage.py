@@ -1,14 +1,14 @@
-from components.sampling.ideal_adc import IdealADC
+from sim_utils.input_generation import InputGeneration
 from simulator_main import sim_config as cfg
 import numpy as np
 
-class IdealADCStage:
-
+class InputGenerationStage:
+    
     def __init__(self, initial_data):
         for key in initial_data:
             setattr(self, key, initial_data[key])
 
-        # always using hydrophone 0 as reference
+        # as many channels as there are hydrophones
         self.num_components = len(cfg.hydrophone_positions)
 
         self.components = [
@@ -16,17 +16,21 @@ class IdealADCStage:
             for i in range(self.num_components)
         ]
 
-    def apply(self, sim_signal):
+    def apply(self):
         return tuple(
-            np.array(component.apply(sig))
-            for (component, sig) in zip(self.components, sim_signal)
+            component.apply()
+            for component in self.components
         )
 
     def write_frame(self, frame):
         pass
-
+    
     def create_component(self, component_index, stage_initial_data):
         initial_data = stage_initial_data
-        initial_data["id"] = "Ideal ADC [" + str(component_index) + "]"
+        # adjust component name to indicate channel
+        initial_data["id"] = "Input Generation [" + str(component_index) + "]"
 
-        return IdealADC(initial_data)
+        # add hydrophone position based on component index
+        initial_data["hydrophone_location"] = cfg.hydrophone_positions[component_index]
+
+        return InputGeneration(initial_data)

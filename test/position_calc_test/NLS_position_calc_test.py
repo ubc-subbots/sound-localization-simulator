@@ -1,4 +1,4 @@
-from components.position_calc.NLS_position_calc import NLS_position_calc, get_squared_error_sum
+from components.position_calc.nls_position_calc import NLSPositionCalc
 from components.position_calc import position_calc_utils
 from simulator_main import sim_config as cfg
 from sim_utils.common_types import *
@@ -52,7 +52,7 @@ initial_data = {
     "optimization_type" : OptimizationType.nelder_mead,
     "initial_guess"     : pinger_guess
 }
-component = NLS_position_calc(initial_data)
+component = NLSPositionCalc(initial_data)
 
 print()
 print("Pinger Parameters")
@@ -104,7 +104,7 @@ initial_data = {
     "optimization_type" : OptimizationType.gradient_descent,
     "initial_guess"     : pinger_guess
 }
-component = NLS_position_calc(initial_data)
+component = NLSPositionCalc(initial_data)
 
 predicted_position = component.apply(true_tdoa)
 
@@ -137,7 +137,7 @@ initial_data = {
     "optimization_type" : OptimizationType.nelder_mead,
     "initial_guess"     : pol_2_cart2d(pinger_guess)
 }
-component = NLS_position_calc(initial_data)
+component = NLSPositionCalc(initial_data)
 
 print()
 print("Pinger Parameters")
@@ -189,7 +189,7 @@ initial_data = {
     "optimization_type" : OptimizationType.gradient_descent,
     "initial_guess"     : pol_2_cart2d(pinger_guess)
 }
-component = NLS_position_calc(initial_data)
+component = NLSPositionCalc(initial_data)
 
 predicted_position = component.apply(true_tdoa)
 

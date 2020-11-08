@@ -8,11 +8,11 @@ Author: Michael Ko
 import importlib
 from sim_utils import components_base
 
-def config_parser(sim_config_file):
+def generate_sim_chain(simulation_chain_dict):
     # Instantiate a list to store all objects.
-    componentList = []
+    sim_chain = []
     # Main loop for instantiating objects - will loop through all input file components.
-    for component in sim_config_file:
+    for component in simulation_chain_dict:
         # Extract component name used to identify path file.
         dataFile = components_base.database[component["Component_name"]]
         # Match component class file path with name.
@@ -21,8 +21,11 @@ def config_parser(sim_config_file):
         class_ = getattr(fileSource, component["Component_name"])
         instance = class_(component)
         # Append to list of objects.
-        componentList.append(instance)
+        sim_chain.append(instance)
 
     # Check output of parser.
-    print(componentList)
-    return componentList
+    print(sim_chain)
+    return sim_chain
+
+def generate_frame(sim_config):
+    return {}

@@ -3,7 +3,7 @@ from sim_utils.common_types import *
 from simulator_main import sim_config as cfg
 import matplotlib.pyplot as plt
 
-class ideal_adc:
+class IdealADC:
 
     def __init__(self, initial_data):
         for key in initial_data:
