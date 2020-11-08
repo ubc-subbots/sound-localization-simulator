@@ -135,14 +135,14 @@ print("===============================================")
 # set component specific configurations
 initial_data = {
     "optimization_type" : OptimizationType.nelder_mead,
-    "initial_guess"     : pol_2_cart2d(pinger_guess)
+    "initial_guess"     : polar_to_cart2d(pinger_guess)
 }
 component = NLSPositionCalc(initial_data)
 
 print()
 print("Pinger Parameters")
 print("=================")
-print("actual pinger position: ", cyl_2_cart(cfg.pinger_position))
+print("actual pinger position: ", cyl_to_cart(cfg.pinger_position))
 print("initial guess: ", initial_data["initial_guess"])
 print()
 
@@ -187,7 +187,7 @@ print("===============================================")
 # set component specific configurations
 initial_data = {
     "optimization_type" : OptimizationType.gradient_descent,
-    "initial_guess"     : pol_2_cart2d(pinger_guess)
+    "initial_guess"     : polar_to_cart2d(pinger_guess)
 }
 component = NLSPositionCalc(initial_data)
 
@@ -198,7 +198,7 @@ predicted_tdoa = tuple(
                                          hydrophone_position, False)
     for hydrophone_position in cfg.hydrophone_positions[1:]
 )
-print("actual pinger position: ", cyl_2_cart(cfg.pinger_position))
+print("actual pinger position: ", cyl_to_cart(cfg.pinger_position))
 print("initial guess: ", initial_data["initial_guess"])
 print("TDOA data (no noise)", true_tdoa)
 print("predicted position (no noise): ", predicted_position)

@@ -157,7 +157,7 @@ def tdoa_function_3D(pinger_pos, hydrophone_pos, is_polar):
     # in this case, pinger_pos[0] is x and pinger_pos[1] is y
     else:
         pinger_distance = np.sqrt(pinger_pos[0]**2 + pinger_pos[1]**2 + cfg.pinger_position.z**2)
-        hydrophone_pos_cart = cyl_2_cart(hydrophone_pos)
+        hydrophone_pos_cart = cyl_to_cart(hydrophone_pos)
         delta_x = pinger_pos[0] - hydrophone_pos_cart.x
         delta_y = pinger_pos[1] - hydrophone_pos_cart.y
         delta_z = cfg.pinger_position.z - hydrophone_pos.z

@@ -29,31 +29,41 @@ CartesianPosition = namedtuple('CartesianPosition', 'x y z')
 PolarPosition = namedtuple('PolarPosition', 'r phi')
 Cartesian2DPosition = namedtuple('Cartesian2DPosition', 'x y')
 
-def cyl_2_cart(cyl_pos):
+def cyl_to_cart(cyl_pos):
     return CartesianPosition(
         cyl_pos.r*np.cos(cyl_pos.phi), 
         cyl_pos.r*np.sin(cyl_pos.phi), 
         cyl_pos.z
     )
 
-def cart_2_cyl(cart_pos):
+def cart_to_cyl(cart_pos):
     return CylindricalPosition(
         np.sqrt(cart_pos.x**2 + cart_pos.y**2), 
         np.arctan2(cart_pos.y, cart_pos.x), 
         cart_pos.z
     )
 
-def pol_2_cart2d(pol_pos):
+def polar_to_cart2d(pol_pos):
     return Cartesian2DPosition(
         pol_pos.r*np.cos(pol_pos.phi), 
         pol_pos.r*np.sin(pol_pos.phi)
     )
 
-def cart2d_2_pol(cart2d_pos):
+def cart2d_to_polar(cart2d_pos):
     return PolarPosition(
         np.sqrt(cart2d_pos.x**2 + cart2d_pos.y**2), 
         np.arctan2(cart2d_pos.y, cart2d_pos.x)
     )
+
+def distance_3Dpoints(location1, location2):
+    if type(location1).__name__ == "CylindricalPosition":
+        location1 = cyl_to_cart(location1)
+    if type(location2).__name__ == "CylindricalPosition":
+        location2 = cyl_to_cart(location2)
+    
+    return ((location1.x - location2.x) ** 2 
+          + (location1.y - location2.y) ** 2
+          + (location1.z - location2.z) ** 2) ** (1/2)
 
 ##################################################################
 # Unit Conversions

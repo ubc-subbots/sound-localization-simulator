@@ -54,3 +54,5 @@ signal_frequency = 40e3
 sampling_frequency = 10*signal_frequency
 # picked to be much higher so it's approximately continuous and can be used in "analog" portion
 continuous_sampling_frequency = 100*signal_frequency
+# TODO: double check pinger on-off frequency
+carrier_frequency = 1

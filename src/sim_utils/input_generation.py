@@ -4,8 +4,10 @@
 #  Input signals are fed into the component chain and propagated through it
 #  in order to generate the simulation frame output data.
 import numpy as np
+from scipy import signal
 from collections import namedtuple
-import sim_utils.sim_config as config
+from simulator_main import sim_config as cfg
+from sim_utils.common_types import * # TODO: figure out why this feels wrong
 
 class InputGeneration:
     """ Input generation is a simple class for simulating the input to our hydrophones.
@@ -19,7 +21,7 @@ class InputGeneration:
 
 
     def _square_wave(self, sampling_frequency, square_wave_frequency,
-                      measurement_period, phase_time):
+                      measurement_period, duty_cycle):
         """Creates a square wave. This is used as a box function over a sine wave to turn it off and on.
 
         @param sampling_frequency     The frequency at which the wave is sampled. Consecutive samples
@@ -30,51 +32,22 @@ class InputGeneration:
                                       units of time
 
         @param measurement_period     The number of time units to generate the wave for
-        @param phase_time             Number of time units the phase of the wave will be delayed by
+        @param duty_cycle             Duty cycle of the wave
 
         @return                       A numpy array representing the voltages sampled from the square wave.
                                     
         """
-        sign_change_frequency = square_wave_frequency * 2
-
-        t_sign_changes = np.linspace(0,
-                                     measurement_period,
-                                     measurement_period * sign_change_frequency)
         t_sampling = np.linspace(0,
                                  measurement_period,
-                                 measurement_period * sampling_frequency)
+                                 int(measurement_period * sampling_frequency))
 
-
-        t_sign_changes = t_sign_changes + phase_time
-
-        t_sign_changes = t_sign_changes[t_sign_changes < measurement_period]
-
-        return np.array(self.__generate_square_wave(t_sampling, t_sign_changes))
-
-    def __generate_square_wave(self, t_sampling, t_sign_changes):
-        """ Helper function for _square_wave. This function generates an array of 0s and 1s matching a square wave
-            with the given sampling times and sign change times.
-
-            @param t_sampling       The times that the function samples the square wave at
-            @param t_sign_changes   The times that the square wave changes sign
-
-            return                  A numpy array representing the voltages sampled from the square wave.
-
-        """
-        sample_iter = iter(t_sampling)
-        t_sample = next(sample_iter)
-        output = []
-        high = True
-
-        for t_sign_change in t_sign_changes:
-            high = not high
-            while t_sample < t_sign_change:
-                output.append(1 if high else 0)
-                t_sample = next(sample_iter)
+        square_wave = signal.square(2 * np.pi * square_wave_frequency * t_sampling, duty=duty_cycle)
+        square_wave /= 2.0
+        square_wave += 1
         
-        return output
+        return square_wave
 
-
+    
     def _sine_wave(self, sampling_frequency, sine_wave_frequency, measurement_period, phase_time):
         """
         Generates a sin wave signal that could be fed into the component chain.
@@ -94,24 +67,60 @@ class InputGeneration:
         phase = phase_time / (sine_wave_period) * 2 * np.pi
         t_sampling = np.linspace(0,
                                 measurement_period,
-                                measurement_period * sampling_frequency)
+                                int(measurement_period * sampling_frequency))
 
         return np.sin(2 * np.pi * sine_wave_frequency * t_sampling + phase)
+    
+    def _add_leading_zeros(self, signal, propogation_time):
+        num_zeros = propogation_time * cfg.continuous_sampling_frequency
+        return np.concatenate(
+            (np.zeros(int(num_zeros)), signal),
+            axis=None
+        )
 
-    def apply(self, frame):
+    def apply(self, input_signal):
+        """
+        Generates the signal received by the four hydrophones
+
+        @param input_signal Unused parameter. This is here so that the object adheres to the standard
+                            stage interface.
         
-        distance = ((self.pinger_location.x - self.hydrophone_location.x) ** 2 + 
-                    (self.pinger_location.y - self.hydrophone_location.y) ** 2 +
-                    (self.pinger_location.z - self.hydrophone_location.z) ** 2) ** (1/2)
-
-        propogation_time = distance / config.c 
-        sine_wave_phase_time = propogation_time % (1 / self.sine_wave_frequency)
-        carrier_phase_time = propogation_time % (1 / self.carrier_frequency)
-
-        sine_wave = self._sine_wave(self.sampling_frequency, self.sine_wave_frequency,
-                                     self.measurement_period, sine_wave_phase_time)
-
-        carrier_wave = self._square_wave(self.sampling_frequency, self.carrier_frequency,
-                                          self.measurement_period, carrier_phase_time)
+        @return A 4-tuple of the signal received by each hydrophone. This is in the form of a sine
+                wave multiplied by a square wave with leading zeros. The number of leading zeros
+                in the signal is normalized such that each hydrophone has
+                <expected number of leading zeros of the closest hydrophone> less than expected.
+                This is to remove leading zeros that do not affect analysis.
+        """
+        distances = [distance_3Dpoints(hydrophone_location, cfg.pinger_position)
+                     for hydrophone_location in cfg.hydrophone_positions]
         
-        return sine_wave * carrier_wave
+        propogation_times = [distance / cfg.speed_of_sound for distance in distances]
+
+        all_signals = []
+
+        for hydrophone_location, propogation_time, distances \
+        in zip(cfg.hydrophone_positions, propogation_times, distances):
+        
+            leading_zeros_t = propogation_time
+
+            sine_wave = self._sine_wave(
+                cfg.continuous_sampling_frequency,
+                cfg.signal_frequency,
+                self.measurement_period - leading_zeros_t,
+                0
+            )
+
+            sine_wave = self._add_leading_zeros(sine_wave, leading_zeros_t)
+
+            carrier_wave = self._square_wave(
+                cfg.continuous_sampling_frequency,
+                cfg.carrier_frequency,
+                self.measurement_period - leading_zeros_t, 
+                self.duty_cycle
+            )
+            carrier_wave = self._add_leading_zeros(carrier_wave, leading_zeros_t)
+
+            all_signals.append(sine_wave * carrier_wave)
+
+        return tuple(all_signals)
+

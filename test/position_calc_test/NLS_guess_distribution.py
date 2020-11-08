@@ -47,8 +47,8 @@ def plot_xy_distribution(x,y, initial_data, change=""):
                             the script. Passing this allows the titles of multiple plots produced 
                             by this script to track the current value of the changing variable    
     '''
-    hx = [cyl_2_cart(pos).x for pos in cfg.hydrophone_positions]
-    hy = [cyl_2_cart(pos).y for pos in cfg.hydrophone_positions]
+    hx = [cyl_to_cart(pos).x for pos in cfg.hydrophone_positions]
+    hy = [cyl_to_cart(pos).y for pos in cfg.hydrophone_positions]
 
     f, (ax1, ax2) = plt.subplots(1, 2, figsize=(10,5))
     
@@ -61,9 +61,9 @@ def plot_xy_distribution(x,y, initial_data, change=""):
     
     h = ax2.hist2d(x, y, density=True, range=[[-50, 50], [-50, 50]], bins=40)
     ax2.scatter(hx, hy, label="Hydrophone", c = 'white')
-    ax2.scatter(cyl_2_cart(cfg.pinger_position).x, cyl_2_cart(cfg.pinger_position).y, 
+    ax2.scatter(cyl_to_cart(cfg.pinger_position).x, cyl_to_cart(cfg.pinger_position).y, 
                 label="Pinger", c='orange')
-    ax2.scatter(pol_2_cart2d(initial_data["initial_guess"]).x, pol_2_cart2d(initial_data["initial_guess"]).y, 
+    ax2.scatter(polar_to_cart2d(initial_data["initial_guess"]).x, polar_to_cart2d(initial_data["initial_guess"]).y, 
                 label="Position Guess", c = 'red')
     ax2.set_xlabel("x (m)")
     ax2.set_ylabel("y (m)")
@@ -133,8 +133,8 @@ def visualize_NLS_data(pinger_guess, noise_stdev, n_iters, change_var = Changing
 
     r_err = [(pos.r - cfg.pinger_position.r) for pos in NLS_outputs]
     phi_err = [(pos.phi - cfg.pinger_position.phi)*CONV_2_DEG for pos in NLS_outputs]
-    x = [cyl_2_cart(pos).x for pos in NLS_outputs]
-    y = [cyl_2_cart(pos).y for pos in NLS_outputs]
+    x = [cyl_to_cart(pos).x for pos in NLS_outputs]
+    y = [cyl_to_cart(pos).y for pos in NLS_outputs]
 
     if (change_var == ChangingVariable.Noise):
         change = " Noise " + r'$\sigma = $' + str(round(noise_stdev,1)) + r'$\mu s$'
