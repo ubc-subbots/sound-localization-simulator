@@ -13,6 +13,9 @@ class IdealADC:
         sampled_signal = downsample(sim_signal, cfg.continuous_sampling_frequency, cfg.sampling_frequency)
         quantized_signal = quantize(sampled_signal, self.num_bits, self.quantization_method)
 
+        # turn into signed integer representation
+        quantized_signal -= 2**(self.num_bits-1)
+        
         return quantized_signal
 
     def write_frame(self, frame):
@@ -22,9 +25,12 @@ def downsample(signal, fs_old, fs_new):
     index_sample_rate = fs_new / fs_old
     new_length = int(round(index_sample_rate*len(signal)))
 
-    sampled_indices = [int(round(index_sample_rate*i)) for i in range(new_length)]
+    sampled_signal = [
+        signal[int(round(i/index_sample_rate))]
+        for i in range(new_length)
+    ]
 
-    return signal[sampled_indices]
+    return np.array(sampled_signal)
 
 def quantize(signal, num_bits, quantization_method):
     # number of quantization levels
@@ -49,4 +55,4 @@ def quantize(signal, num_bits, quantization_method):
     else:
         raise ValueError("Illegal Quanitzation Type: " + str(type(quantization_method)))
 
-    return quantized_signal
+    return np.array(quantized_signal)

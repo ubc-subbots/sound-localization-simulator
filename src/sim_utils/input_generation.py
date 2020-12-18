@@ -41,9 +41,12 @@ class InputGeneration:
                                  measurement_period,
                                  int(measurement_period * sampling_frequency))
 
+        # generates a square wave between -1 and 1
         square_wave = signal.square(2 * np.pi * square_wave_frequency * t_sampling, duty=duty_cycle)
-        square_wave /= 2.0
+        # set wave minimum to 0
         square_wave += 1
+        # divide by 2 to get wave maximum of 1
+        square_wave /= 2.0
         
         return square_wave
 
@@ -91,36 +94,27 @@ class InputGeneration:
                 <expected number of leading zeros of the closest hydrophone> less than expected.
                 This is to remove leading zeros that do not affect analysis.
         """
-        distances = [distance_3Dpoints(hydrophone_location, cfg.pinger_position)
-                     for hydrophone_location in cfg.hydrophone_positions]
+        distance = distance_3Dpoints(self.hydrophone_position, cfg.pinger_position)
         
-        propogation_times = [distance / cfg.speed_of_sound for distance in distances]
+        propogation_time = distance / cfg.speed_of_sound
+        print(distance, propogation_time)
+        leading_zeros_t = propogation_time
 
-        all_signals = []
+        sine_wave = self._sine_wave(
+            cfg.continuous_sampling_frequency,
+            cfg.signal_frequency,
+            self.measurement_period - leading_zeros_t,
+            0
+        )
 
-        for hydrophone_location, propogation_time, distances \
-        in zip(cfg.hydrophone_positions, propogation_times, distances):
-        
-            leading_zeros_t = propogation_time
+        sine_wave = self._add_leading_zeros(sine_wave, leading_zeros_t)
 
-            sine_wave = self._sine_wave(
-                cfg.continuous_sampling_frequency,
-                cfg.signal_frequency,
-                self.measurement_period - leading_zeros_t,
-                0
-            )
+        carrier_wave = self._square_wave(
+            cfg.continuous_sampling_frequency,
+            cfg.carrier_frequency,
+            self.measurement_period - leading_zeros_t, 
+            self.duty_cycle
+        )
+        carrier_wave = self._add_leading_zeros(carrier_wave, leading_zeros_t)
 
-            sine_wave = self._add_leading_zeros(sine_wave, leading_zeros_t)
-
-            carrier_wave = self._square_wave(
-                cfg.continuous_sampling_frequency,
-                cfg.carrier_frequency,
-                self.measurement_period - leading_zeros_t, 
-                self.duty_cycle
-            )
-            carrier_wave = self._add_leading_zeros(carrier_wave, leading_zeros_t)
-
-            all_signals.append(sine_wave * carrier_wave)
-
-        return tuple(all_signals)
-
+        return sine_wave * carrier_wave

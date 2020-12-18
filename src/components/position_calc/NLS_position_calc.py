@@ -69,6 +69,7 @@ class NLSPositionCalc:
                             the TDOA between cfg.hydrophone_positions[1] and cfg.hydrophone_positions[0]
                             (specifically t1-t0)
         '''
+        print(sim_signal)
         # argument to the minimizer must be a numpy array
         pinger_pos = np.zeros(2)
         # non-minimized args are packaged in a single tuple
@@ -93,7 +94,7 @@ class NLSPositionCalc:
             return CartesianPosition(pinger_pos[0], pinger_pos[1], cfg.pinger_position.z)
 
     def write_frame(self, frame):
-        pass
+        return {}
 
 def get_squared_error_sum(pinger_pos, is_polar, *hydrophone_tdoas):
     '''

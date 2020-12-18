@@ -9,9 +9,11 @@ Main Simulation File
 ##################################################
 
 import argparse
+import os
 import logging
 from sim_utils import config_parser, output_parser
 from datetime import datetime
+import matplotlib.pyplot as plt
 
 parser = argparse.ArgumentParser(description='Sound Localization System Simulator')
 parser.add_argument('-c', '--config', default = "default_config", type = str,
@@ -45,14 +47,31 @@ if __name__ == "__main__":
 	frame = config_parser.generate_frame(sim_config)
 
 	# create initial simulation signal
-	sim_signal = simulation_chain[0].apply()
-
+	sim_signal = None
 	# propagate simulation signal and data frame through the chain
-	for stage in simulation_chain[1:]:
+	for stage in simulation_chain:
 		sim_signal 	= stage.apply(sim_signal)
 		frame = stage.write_frame(frame)
+
+	print(sim_signal)
+
+	from components.position_calc.position_calc_utils import tdoa_function_3D
+	tdoa_vals = [
+		tdoa_function_3D(sim_config.pinger_position, hydrophone_pos, True)
+		for hydrophone_pos in sim_config.hydrophone_positions[1:]
+	]
+
+	print(tdoa_vals)
+
+	plt.show()
+
 
 	# write resulting frame to the output files
 	pickle_path = "output/" + args.config + "/" + args.outfile_name + ".p"
 	xml_path = "output/" + args.config + "/" + args.outfile_name + ".xml"
+
+	# check if output directory exists and if not create it
+	if not os.path.exists(os.path.dirname(pickle_path)):
+		os.makedirs(os.path.dirname(pickle_path))
+		
 	output_parser.create_output_file(frame, pickle_path, xml_path)

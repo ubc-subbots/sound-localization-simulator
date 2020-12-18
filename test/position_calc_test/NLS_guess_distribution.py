@@ -11,7 +11,7 @@ from enum import Enum
 vary_noise =        False
 vary_pinger =       False
 vary_guess =        False
-vary_hydrophones =  False
+vary_hydrophones =  True
 
 class ChangingVariable(Enum):
     '''

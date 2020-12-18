@@ -1,6 +1,7 @@
 from simulator_main import sim_config as cfg
 from components.tdoa.phase_analysis import PhaseAnalysis
 import numpy as np
+import matplotlib.pyplot as plt
 
 class PhaseAnalysisStage:
 
@@ -17,6 +18,13 @@ class PhaseAnalysisStage:
         ]
 
     def apply(self, sim_signal):
+        plt.figure()
+        i=0
+        for signal in sim_signal:
+           plt.plot(signal, label="hydrophone %0d"%i)
+           i += 1
+        plt.legend()
+
         phase_analysis_inputs = [
             (sim_signal[0], sim_signal[i+1])
             for i in range(self.num_components)
