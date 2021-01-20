@@ -12,7 +12,7 @@ class PhaseAnalysis:
         hydrophone0_phase = get_phase(sim_signal[0])
         hydrophone_phase = get_phase(sim_signal[1])
 
-        return (hydrophone_phase - hydrophone0_phase) / (2*np.pi*cfg.signal_frequency)
+        return (hydrophone0_phase - hydrophone_phase) / (2*np.pi*cfg.signal_frequency)
 
     def write_frame(self, frame):
         return {}
@@ -31,8 +31,8 @@ def get_phase(input_signal):
     # this fixes scaling, I'm not 100% sure why this is needed
     fft = 2 * fft / cfg.sampling_frequency
 
-    plt.figure()
-    plt.plot(np.angle(fft))
+    # plt.figure()
+    # plt.plot(np.angle(fft))
 
     # find index that matches to signal frequency in the fft spectrum
     sig_discrete_frequency = cfg.signal_frequency / cfg.sampling_frequency # fft spectrum ranges from discrete:[0, 1] -> continuous[0, Fs]

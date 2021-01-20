@@ -47,7 +47,7 @@ class NLSPositionCalc:
             The initial guess for the XY plane position of the pinger. The function expects an input of 
             type PolarPosition or Cartesian2DPosition, both defined in common_types.py
         '''
-        self.name = initial_data.get("id", "NLS 1")
+        self.Component_name = initial_data.get("Component_name", "NLS 1")
         self.optimization_type = initial_data.get("optimization_type", OptimizationType.nelder_mead)
         initial_guess = initial_data.get("initial_guess", PolarPosition(0,0))
         if (type(initial_guess) == PolarPosition):
@@ -61,15 +61,14 @@ class NLSPositionCalc:
     
     def apply(self, sim_signal):
         '''
-        @bried Applies the simulation signal to the component and returns its outputs.
+        @brief Applies the simulation signal to the component and returns its outputs.
 
         @param sim_signal   A tuple representing the TDOA values measured by each hydrophone with hydrophone
                             0. The order of TDOA values in the tuple MUST follow the order of hydrophones
                             specified in the config file. For example, the first value in the tuple will be
                             the TDOA between cfg.hydrophone_positions[1] and cfg.hydrophone_positions[0]
                             (specifically t1-t0)
-        '''
-        print(sim_signal)
+        '''        
         # argument to the minimizer must be a numpy array
         pinger_pos = np.zeros(2)
         # non-minimized args are packaged in a single tuple

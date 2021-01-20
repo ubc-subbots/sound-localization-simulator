@@ -1,9 +1,9 @@
 from simulator_main import sim_config as cfg
-from components.tdoa.phase_analysis import PhaseAnalysis
+from components.tdoa.cross_correlation import CrossCorrelation
 import numpy as np
 import matplotlib.pyplot as plt
 
-class PhaseAnalysisStage:
+class CrossCorrelationStage:
 
     def __init__(self, initial_data):
         for key in initial_data:
@@ -46,4 +46,4 @@ class PhaseAnalysisStage:
         initial_data = stage_initial_data
         initial_data["id"] = self.id + "[%0d]"%(component_index+1)
 
-        return PhaseAnalysis(initial_data)
+        return CrossCorrelation(initial_data)

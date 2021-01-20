@@ -13,5 +13,7 @@ database = {
     "ThresholdCaptureTrigger"   : "stages.sampling.threshold_capture_trigger",
     "PhaseAnalysis"             : "components.tdoa.phase_analysis",
     "PhaseAnalysisStage"        : "stages.tdoa.phase_analysis_stage",
+    "CrossCorrelation"          : "components.tdoa.cross_correlation",
+    "CrossCorrelationStage"     : "stages.tdoa.cross_correlation_stage",
     "NLSPositionCalc"           : "components.position_calc.nls_position_calc"
 }

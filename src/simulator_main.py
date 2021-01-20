@@ -41,6 +41,7 @@ sim_config = import_module(args.config)
 ##################################################
 if __name__ == "__main__":
 	# construct simulation chain from configuration file
+	print("Parsing simulator chain...")
 	simulation_chain = config_parser.generate_sim_chain(sim_config.simulation_chain)
 
 	# create initial simulation data frame from configuration file
@@ -48,12 +49,14 @@ if __name__ == "__main__":
 
 	# create initial simulation signal
 	sim_signal = None
+	print("starting signal propagation...")
 	# propagate simulation signal and data frame through the chain
 	for stage in simulation_chain:
+		print("Current stage: %s" % stage.Component_name)
 		sim_signal 	= stage.apply(sim_signal)
 		frame = stage.write_frame(frame)
 
-	print(sim_signal)
+	print("Final Position:", sim_signal)
 
 	from components.position_calc.position_calc_utils import tdoa_function_3D
 	tdoa_vals = [
@@ -61,7 +64,7 @@ if __name__ == "__main__":
 		for hydrophone_pos in sim_config.hydrophone_positions[1:]
 	]
 
-	print(tdoa_vals)
+	print("Actual Time Differences:", tdoa_vals)
 
 	plt.show()
 

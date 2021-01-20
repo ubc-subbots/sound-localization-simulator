@@ -1,7 +1,8 @@
 *.pyc
 
-# do not push logs to repo
+# do not push logs or output to repo
 log/
+output/
 
 # do not push vscode directory to repo
 .vscode/

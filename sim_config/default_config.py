@@ -16,17 +16,17 @@ speed_of_sound = 1500 #m/s
 #### position information ####
 hydrophone_positions = [
     CylindricalPosition(0, 0, 0),
-    CylindricalPosition(3e-2, 0, -1e-2),
-    CylindricalPosition(3e-2, np.pi/2, -1e-2),
-    CylindricalPosition(3e-2, np.pi, -1e-2),
-    CylindricalPosition(3e-2, -np.pi/2, -1e-2),
+    CylindricalPosition(1.5e-2, 0, -1e-2),
+    CylindricalPosition(1.5e-2, np.pi/2, -1e-2),
+    CylindricalPosition(1.5e-2, np.pi, -1e-2),
+    CylindricalPosition(1.5e-2, -np.pi/2, -1e-2),
 ]
 pinger_position = CylindricalPosition(15, 0, 5)
 
 #### frequency information ####
 signal_frequency = 40e3
 # used as ADC sampling frequency and for "digital" portion
-sampling_frequency = 10*signal_frequency
+sampling_frequency = 20*signal_frequency
 # picked to be much higher so it's approximately continuous and can be used in "analog" portion
 continuous_sampling_frequency = 100*signal_frequency
 # TODO: double check pinger on-off frequency
@@ -56,12 +56,12 @@ simulation_chain = [
         "threshold"             : 0.05*(2**11)
     },
     {
-        "Component_name"        : "PhaseAnalysisStage",
-        "id"                    : "Fourier Phase Stage",
+        "Component_name"        : "CrossCorrelationStage",
+        "id"                    : "Cross Correlation Stage",
     },
     {
         "Component_name"        : "NLSPositionCalc",
-        "id"                    : "NLS 1",
+        "id"                    : "NLS",
         "optimization_method"   : OptimizationType.nelder_mead,
         "initial_guess"         : PolarPosition(10, np.pi)
     },
