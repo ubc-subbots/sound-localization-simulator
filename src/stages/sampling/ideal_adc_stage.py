@@ -1,7 +1,6 @@
 from components.sampling.ideal_adc import IdealADC
 from simulator_main import sim_config as cfg
 import numpy as np
-import matplotlib.pyplot as plt
 
 class IdealADCStage:
 

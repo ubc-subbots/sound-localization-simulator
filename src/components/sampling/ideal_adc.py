@@ -8,7 +8,6 @@ The component modelling an ideal analog to digital converter (ADC)
 import numpy as np
 from sim_utils.common_types import *
 from simulator_main import sim_config as cfg
-import matplotlib.pyplot as plt
 
 class IdealADC:
 

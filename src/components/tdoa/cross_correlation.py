@@ -2,6 +2,11 @@ import matplotlib.pyplot as plt
 from scipy.signal import correlate
 import numpy as np
 from simulator_main import sim_config as cfg
+import logging
+from sim_utils.output_utils import initialize_logger
+
+# create logger object for this module
+logger = initialize_logger(__name__)
 
 class CrossCorrelation:
     def __init__(self, initial_data):
@@ -23,40 +28,22 @@ class CrossCorrelation:
         halfrange = int(N/2)
         roi = cross_correlation[center_idx-halfrange:center_idx+halfrange]
 
-        maxima_idx = np.argmax(roi) - halfrange
+        # plot cross correlation result if log level in debug mode
+        level = logger.getEffectiveLevel()
+        if level <= logging.DEBUG:
+            self.plot_cross_correlation(cross_correlation, center_idx, halfrange, roi)
 
-        n = np.linspace(-len(h0_sig)/2, len(h0_sig)/2, len(h0_sig))
-        plt.figure()
-        plt.plot(n, cross_correlation)
-        plt.plot(n[center_idx-halfrange:center_idx+halfrange] ,roi)
-        plt.title(self.id)
+        maxima_idx = np.argmax(roi) - halfrange
 
         return maxima_idx / cfg.sampling_frequency
 
     def write_frame(self, frame):
         return {}
 
-def test_lag_finder(): 
-    # Sine sample with some noise and copy to y1 and y2 with a 1-second lag
-    sample_rate = cfg.sampling_frequency
-    signal_frequency = cfg.signal_frequency
-    f = signal_frequency / sample_rate
-    print(f)
-    n = np.linspace(0, round(5/f), int(round(5/f)))
-    y = np.sin(f*n)
-    y += np.random.normal(0, 0.5, y.shape)
-    y1 = y[0:int(3/f)]
-    n_delay = int(0.5/f)
-    y2 = y[n_delay:int(3/f) + n_delay]
-
-    #plt.plot(y1)
-    #plt.plot(y2)
-    cc = CrossCorrelation({"id" : "Cross Correlation"})
-    delay = cc.apply((y1, y2))
-
-    print("calculated delay", delay)
-    print("actual delay", n_delay/sample_rate)
-
-if __name__ == '__main__':
-    test_lag_finder()
-    plt.show()
+    def plot_cross_correlation(self, cross_correlation, center_idx, halfrange, roi):
+        N = len(cross_correlation)
+        n = np.linspace(-N/2, N/2, N)
+        plt.figure()
+        plt.plot(n, cross_correlation)
+        plt.plot(n[center_idx-halfrange:center_idx+halfrange] ,roi)
+        plt.title(self.id)

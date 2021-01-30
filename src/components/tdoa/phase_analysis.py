@@ -1,6 +1,5 @@
 import numpy as np
 from simulator_main import sim_config as cfg
-from matplotlib import pyplot as plt
 
 class PhaseAnalysis:
     
@@ -30,9 +29,6 @@ def get_phase(input_signal):
     
     # this fixes scaling, I'm not 100% sure why this is needed
     fft = 2 * fft / cfg.sampling_frequency
-
-    # plt.figure()
-    # plt.plot(np.angle(fft))
 
     # find index that matches to signal frequency in the fft spectrum
     sig_discrete_frequency = cfg.signal_frequency / cfg.sampling_frequency # fft spectrum ranges from discrete:[0, 1] -> continuous[0, Fs]

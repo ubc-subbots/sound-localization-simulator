@@ -1,7 +1,12 @@
 from simulator_main import sim_config as cfg
 from components.tdoa.cross_correlation import CrossCorrelation
 import numpy as np
-import matplotlib.pyplot as plt
+import sim_utils.plt_utils as plt
+import logging
+from sim_utils.output_utils import initialize_logger
+
+# create logger object for this module
+logger = initialize_logger(__name__)
 
 class CrossCorrelationStage:
 
@@ -18,12 +23,10 @@ class CrossCorrelationStage:
         ]
 
     def apply(self, sim_signal):
-        plt.figure()
-        i=0
-        for signal in sim_signal:
-           plt.plot(signal, label="hydrophone %0d"%i)
-           i += 1
-        plt.legend()
+        # plot hydrophone signals if log level in debug mode
+        level = logger.getEffectiveLevel()
+        if level <= logging.DEBUG:
+            plt.plot_signals(*sim_signal, title="Sampled and Quantized Signals")
 
         phase_analysis_inputs = [
             (sim_signal[0], sim_signal[i+1])
