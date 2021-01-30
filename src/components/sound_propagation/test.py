@@ -1,3 +1,7 @@
+# have bellhop.exe in your PATH variable
+# pip install arlpy
+# import arlpy
+
 import arlpy.uwapm as pm
 import arlpy.plot as plt
 import numpy as np
