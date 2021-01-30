@@ -1,4 +1,4 @@
-'''@package NLS_position_calc
+'''@package nls_position_calc
 The component modelling the Non-linear Least Squares (NLS) solution of the position calculation
 problem.
 
@@ -47,7 +47,8 @@ class NLSPositionCalc:
             The initial guess for the XY plane position of the pinger. The function expects an input of 
             type PolarPosition or Cartesian2DPosition, both defined in common_types.py
         '''
-        self.Component_name = initial_data.get("Component_name", "NLS 1")
+        self.component_name = initial_data.get("component_name", "NLSPositionCalc")
+        self.id = initial_data.get("id", "NLS")
         self.optimization_type = initial_data.get("optimization_type", OptimizationType.nelder_mead)
         initial_guess = initial_data.get("initial_guess", PolarPosition(0,0))
         if (type(initial_guess) == PolarPosition):

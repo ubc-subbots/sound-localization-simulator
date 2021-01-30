@@ -7,6 +7,7 @@ Author: Michael Ko
 database = {
     "InputGeneration"           : "sim_utils.input_generation",
     "InputGenerationStage"      : "stages.input.input_generation_stage",
+    "GaussianNoise"             : "stages.noise.gaussian_noise",
     "IdealADC"                  : "components.sampling.ideal_adc",
     "IdealADCStage"             : "stages.sampling.ideal_adc_stage",
     "ThresholdIndexFinder"      : "components.sampling.threshold_index_finder",

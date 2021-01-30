@@ -1,3 +1,10 @@
+'''@package ideal_adc
+The component modelling an ideal analog to digital converter (ADC) 
+
+@author Dvir Hilu
+@date Jan 20, 2021
+'''
+
 import numpy as np
 from sim_utils.common_types import *
 from simulator_main import sim_config as cfg

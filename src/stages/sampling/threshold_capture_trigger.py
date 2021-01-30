@@ -22,8 +22,6 @@ class ThresholdCaptureTrigger:
 
         trigger_index = min(trigger_indices)
 
-        print(trigger_index, self.num_samples)
-
         return tuple(
             signal[trigger_index:(trigger_index + self.num_samples)]
             for signal in sim_signal

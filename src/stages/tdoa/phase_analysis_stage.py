@@ -35,8 +35,6 @@ class PhaseAnalysisStage:
             for (component, input_sig) in zip(self.components, phase_analysis_inputs)
         )
 
-        print("calculated time differences:", tdoa)
-
         return tdoa
 
     def write_frame(self, frame):

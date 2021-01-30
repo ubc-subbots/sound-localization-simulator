@@ -97,7 +97,6 @@ class InputGeneration:
         distance = distance_3Dpoints(self.hydrophone_position, cfg.pinger_position)
         
         propogation_time = distance / cfg.speed_of_sound
-        print(distance, propogation_time)
         leading_zeros_t = propogation_time
 
         sine_wave = self._sine_wave(
