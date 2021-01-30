@@ -4,6 +4,10 @@ from sim_utils.common_types import cyl_to_cart, polar_to_cart2d
 from simulator_main import sim_config as cfg
 
 def plot_calculated_positions(position_list):
+	'''
+	plots the 2D graph showing the pinger position, hydrophone position,
+	pinger initial guess, and calculated position distribution
+	'''
 	hx = [cyl_to_cart(pos).x     for pos in cfg.hydrophone_positions]
 	hy = [cyl_to_cart(pos).y     for pos in cfg.hydrophone_positions]
 	x  = [polar_to_cart2d(pos).x for pos in position_list]

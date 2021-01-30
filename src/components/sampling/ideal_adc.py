@@ -16,7 +16,10 @@ class IdealADC:
             setattr(self, key, initial_data[key])
 
     def apply(self, sim_signal):
+        # downsamples signal from cfg.continuous_sampling_frequency to cfg.sampling_frequency
         sampled_signal = downsample(sim_signal, cfg.continuous_sampling_frequency, cfg.sampling_frequency)
+        # map signal from continuous values to an unsigned integers of size self.num_bits
+        # uses either midrise or midtread quantization as specified by self.quantization_method
         quantized_signal = quantize(sampled_signal, self.num_bits, self.quantization_method)
 
         # turn into signed integer representation
@@ -28,9 +31,11 @@ class IdealADC:
         pass
 
 def downsample(signal, fs_old, fs_new):
+    # adjust new signal length based on sampling rate reduction
     index_sample_rate = fs_new / fs_old
     new_length = int(round(index_sample_rate*len(signal)))
 
+    # selectively keep indices at correct interval
     sampled_signal = [
         signal[int(round(i/index_sample_rate))]
         for i in range(new_length)

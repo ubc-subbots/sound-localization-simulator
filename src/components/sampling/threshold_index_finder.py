@@ -1,6 +1,9 @@
 from simulator_main import sim_config as cfg
 
 class ThresholdIndexFinder:
+    '''
+    Finds the index at which the signal first crosses a certain threshold
+    '''
 
     def __init__(self, initial_data):
         for key in initial_data:

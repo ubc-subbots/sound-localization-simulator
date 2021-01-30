@@ -3,12 +3,15 @@ from simulator_main import sim_config as cfg
 import numpy as np
 
 class IdealADCStage:
+    '''
+    stage to simulate an ADC for every hydrophone signal channel
+    '''
 
     def __init__(self, initial_data):
         for key in initial_data:
             setattr(self, key, initial_data[key])
 
-        # always using hydrophone 0 as reference
+        # as many channels as there are hydrophones
         self.num_components = len(cfg.hydrophone_positions)
 
         self.components = [

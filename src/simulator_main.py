@@ -25,6 +25,9 @@ parser.add_argument('-o', '--outfile_name',
 parser.add_argument('-l', '--log_level', default = "INFO", type = str, 
         choices=["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG", "NOTSET"],
         help = "The level of verbosity with which the simulator will dump logging information")
+parser.add_argument('-n', '--num_iterations', default = 1, type = int,
+        help = "The number of iterations that the simulation performs through the component chain")
+
 
 args = parser.parse_args()
 
@@ -58,7 +61,7 @@ if __name__ == "__main__":
 	sim_signal = None
 	position_list = []
 	logger.info("starting signal propagation...")
-	for i in range(sim_config.num_iterations):
+	for i in range(args.num_iterations):
 		logger.info("Current iteration: %0d" % i)
 		# propagate simulation signal and data frame through the chain
 		for stage in simulation_chain:

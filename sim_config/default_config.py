@@ -11,8 +11,6 @@ import numpy as np
 # Gloabl Parameters
 ##############################################
 
-num_iterations = 1
-
 speed_of_sound = 1500 #m/s
 
 #### position information ####
