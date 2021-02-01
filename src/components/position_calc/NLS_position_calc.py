@@ -1,4 +1,4 @@
-'''@package NLS_position_calc
+'''@package nls_position_calc
 The component modelling the Non-linear Least Squares (NLS) solution of the position calculation
 problem.
 
@@ -11,7 +11,7 @@ import numpy as np
 from simulator_main import sim_config as cfg
 from sim_utils.common_types import *
 
-class NLS_position_calc:
+class NLSPositionCalc:
     '''
     NLS_position_calc is a class used to model the method of calculating the position of the pinger
     from hydrohpone Time Differece Of Arrival (TDOA) using a Non-linear Least Squares (NLS) solution
@@ -47,7 +47,8 @@ class NLS_position_calc:
             The initial guess for the XY plane position of the pinger. The function expects an input of 
             type PolarPosition or Cartesian2DPosition, both defined in common_types.py
         '''
-        self.name = initial_data.get("name", "NLS_position_calc")
+        self.component_name = initial_data.get("component_name", "NLSPositionCalc")
+        self.id = initial_data.get("id", "NLS")
         self.optimization_type = initial_data.get("optimization_type", OptimizationType.nelder_mead)
         initial_guess = initial_data.get("initial_guess", PolarPosition(0,0))
         if (type(initial_guess) == PolarPosition):
@@ -61,14 +62,14 @@ class NLS_position_calc:
     
     def apply(self, sim_signal):
         '''
-        @bried Applies the simulation signal to the component and returns its outputs.
+        @brief Applies the simulation signal to the component and returns its outputs.
 
         @param sim_signal   A tuple representing the TDOA values measured by each hydrophone with hydrophone
                             0. The order of TDOA values in the tuple MUST follow the order of hydrophones
                             specified in the config file. For example, the first value in the tuple will be
                             the TDOA between cfg.hydrophone_positions[1] and cfg.hydrophone_positions[0]
                             (specifically t1-t0)
-        '''
+        '''        
         # argument to the minimizer must be a numpy array
         pinger_pos = np.zeros(2)
         # non-minimized args are packaged in a single tuple
@@ -93,7 +94,7 @@ class NLS_position_calc:
             return CartesianPosition(pinger_pos[0], pinger_pos[1], cfg.pinger_position.z)
 
     def write_frame(self, frame):
-        pass
+        return {}
 
 def get_squared_error_sum(pinger_pos, is_polar, *hydrophone_tdoas):
     '''

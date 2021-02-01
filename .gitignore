@@ -1,7 +1,8 @@
 *.pyc
 
-# do not push logs to repo
+# do not push logs or output to repo
 log/
+output/
 
 # do not push vscode directory to repo
 .vscode/
@@ -9,6 +10,7 @@ log/
 # do not push environment to repo, just requirements.txt
 env/*
 !env/requirements.txt
+!env/bellhop.exe
 
 # doxygen directory will give a lot of merge issues. Ignore from repo and just generate locally for now
 docs/doxygen/

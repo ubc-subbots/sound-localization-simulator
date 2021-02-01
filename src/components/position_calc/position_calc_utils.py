@@ -8,6 +8,10 @@ import numpy as np
 from scipy import optimize
 from simulator_main import sim_config as cfg
 from sim_utils.common_types import *
+from sim_utils.output_utils import initialize_logger
+
+# create logger object for this module
+logger = initialize_logger(__name__)
 
 def gradient_descent(func, starting_params, args=(), step_size=0.5, termination_ROC=1e-5, 
                         max_iter=1e5, is_grad=False, delta_x=0.01):
@@ -46,7 +50,7 @@ def gradient_descent(func, starting_params, args=(), step_size=0.5, termination_
 
     grad_mag = np.linalg.norm(gradient)
     num_iter = 0
-    print(gradient)
+    logger.debug(gradient)
 
     while (grad_mag > termination_ROC):
         params = params - step_size*gradient
@@ -60,15 +64,15 @@ def gradient_descent(func, starting_params, args=(), step_size=0.5, termination_
         num_iter += 1
 
         if (grad_mag == np.inf):
-            print("OverflowError. Step size might be too big. Optimization diverges")
-            print("Diverging Parameters: ", params)
+            logger.error("OverflowError. Step size might be too big. Optimization diverges")
+            logger.debug("Diverging Parameters: %s" % str(params))
             return params
 
         if (num_iter == max_iter):
-            print("WARNING! maximum iteration number reached")
+            logger.warning("maximum iteration number reached")
             break
 
-    print("Gradient Descent with step-size %f finished after %0d iterations" %(step_size, num_iter))
+    logger.info("Gradient Descent with step-size %f finished after %0d iterations" %(step_size, num_iter))
     return params
 
 def nelder_mead(func, starting_params, args=()):
@@ -90,10 +94,9 @@ def nelder_mead(func, starting_params, args=()):
     results = optimize.minimize(func, starting_params, args=args, method='Nelder-Mead')
 
     if (not results.success):
-        print(results.message)
+        logger.warning(results.message)
 
-    # print("Converged with %d iterations" %results.nit)
-    # print(func(results.x, *args))
+    logger.info("Nelder Mead optimization converged with %d iterations" %results.nit)
 
     return results.x
 
@@ -157,7 +160,7 @@ def tdoa_function_3D(pinger_pos, hydrophone_pos, is_polar):
     # in this case, pinger_pos[0] is x and pinger_pos[1] is y
     else:
         pinger_distance = np.sqrt(pinger_pos[0]**2 + pinger_pos[1]**2 + cfg.pinger_position.z**2)
-        hydrophone_pos_cart = cyl_2_cart(hydrophone_pos)
+        hydrophone_pos_cart = cyl_to_cart(hydrophone_pos)
         delta_x = pinger_pos[0] - hydrophone_pos_cart.x
         delta_y = pinger_pos[1] - hydrophone_pos_cart.y
         delta_z = cfg.pinger_position.z - hydrophone_pos.z

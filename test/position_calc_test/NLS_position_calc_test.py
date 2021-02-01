@@ -1,4 +1,4 @@
-from components.position_calc.NLS_position_calc import NLS_position_calc, get_squared_error_sum
+from components.position_calc.nls_position_calc import NLSPositionCalc
 from components.position_calc import position_calc_utils
 from simulator_main import sim_config as cfg
 from sim_utils.common_types import *
@@ -29,7 +29,7 @@ true_tdoa = tuple(
     for hydrophone_position in cfg.hydrophone_positions[1:]
 )
 
-noise = [np.random.normal(0, 1*TIME_CONV['us']) for i in range(len(true_tdoa))]
+noise = [np.random.normal(0, 1*UNIT_PREFIX['u']) for i in range(len(true_tdoa))]
 
 tdoa_noisy = [
     tdoa+noise_val 
@@ -52,7 +52,7 @@ initial_data = {
     "optimization_type" : OptimizationType.nelder_mead,
     "initial_guess"     : pinger_guess
 }
-component = NLS_position_calc(initial_data)
+component = NLSPositionCalc(initial_data)
 
 print()
 print("Pinger Parameters")
@@ -86,7 +86,7 @@ predicted_tdoa = tuple(
                 
 print("Noisey Run")
 print("=================")
-print("Noise Values (us): ", [noise_val/TIME_CONV['us'] for noise_val in noise])
+print("Noise Values (us): ", [noise_val/UNIT_PREFIX['u'] for noise_val in noise])
 print("TDOA data: ", tdoa_noisy)
 print("predicted position: ", predicted_position)
 print("predicted TDOA: ", predicted_tdoa)
@@ -104,7 +104,7 @@ initial_data = {
     "optimization_type" : OptimizationType.gradient_descent,
     "initial_guess"     : pinger_guess
 }
-component = NLS_position_calc(initial_data)
+component = NLSPositionCalc(initial_data)
 
 predicted_position = component.apply(true_tdoa)
 
@@ -135,14 +135,14 @@ print("===============================================")
 # set component specific configurations
 initial_data = {
     "optimization_type" : OptimizationType.nelder_mead,
-    "initial_guess"     : pol_2_cart2d(pinger_guess)
+    "initial_guess"     : polar_to_cart2d(pinger_guess)
 }
-component = NLS_position_calc(initial_data)
+component = NLSPositionCalc(initial_data)
 
 print()
 print("Pinger Parameters")
 print("=================")
-print("actual pinger position: ", cyl_2_cart(cfg.pinger_position))
+print("actual pinger position: ", cyl_to_cart(cfg.pinger_position))
 print("initial guess: ", initial_data["initial_guess"])
 print()
 
@@ -171,7 +171,7 @@ predicted_tdoa = tuple(
                 
 print("Noisey Run")
 print("=================")
-print("Noise Values (us): ", [noise_val/TIME_CONV['us'] for noise_val in noise])
+print("Noise Values (us): ", [noise_val/UNIT_PREFIX['u'] for noise_val in noise])
 print("TDOA data: ", tdoa_noisy)
 print("predicted position: ", predicted_position)
 print("predicted TDOA: ", predicted_tdoa)
@@ -187,9 +187,9 @@ print("===============================================")
 # set component specific configurations
 initial_data = {
     "optimization_type" : OptimizationType.gradient_descent,
-    "initial_guess"     : pol_2_cart2d(pinger_guess)
+    "initial_guess"     : polar_to_cart2d(pinger_guess)
 }
-component = NLS_position_calc(initial_data)
+component = NLSPositionCalc(initial_data)
 
 predicted_position = component.apply(true_tdoa)
 
@@ -198,7 +198,7 @@ predicted_tdoa = tuple(
                                          hydrophone_position, False)
     for hydrophone_position in cfg.hydrophone_positions[1:]
 )
-print("actual pinger position: ", cyl_2_cart(cfg.pinger_position))
+print("actual pinger position: ", cyl_to_cart(cfg.pinger_position))
 print("initial guess: ", initial_data["initial_guess"])
 print("TDOA data (no noise)", true_tdoa)
 print("predicted position (no noise): ", predicted_position)
