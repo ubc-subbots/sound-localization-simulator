@@ -28,7 +28,6 @@ parser.add_argument('-l', '--log_level', default = "INFO", type = str,
 parser.add_argument('-n', '--num_iterations', default = 1, type = int,
         help = "The number of iterations that the simulation performs through the component chain")
 
-
 args = parser.parse_args()
 
 ##################################################

@@ -70,5 +70,5 @@ simulation_chain = [
         "id"                    : "NLS",
         "optimization_method"   : OptimizationType.nelder_mead,
         "initial_guess"         : PolarPosition(10, np.pi)
-    },
+    }
 ]
