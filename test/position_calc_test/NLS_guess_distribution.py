@@ -8,10 +8,10 @@ import matplotlib.pyplot as plt
 from enum import Enum
 
 # determine which parts run
-vary_noise =        False
+vary_noise =        True
 vary_pinger =       False
 vary_guess =        False
-vary_hydrophones =  True
+vary_hydrophones =  False
 
 class ChangingVariable(Enum):
     '''
@@ -26,13 +26,13 @@ class ChangingVariable(Enum):
 cfg.speed_of_sound = 1500 #m/s
 cfg.hydrophone_positions = [
     CylindricalPosition(0, 0, 0),
-    CylindricalPosition(3*UNIT_PREFIX["centi"], -np.pi/2, 0),
-    CylindricalPosition(3*UNIT_PREFIX["centi"], 0, 0),
-    CylindricalPosition(3*UNIT_PREFIX["centi"], np.pi/2, 0),
-    CylindricalPosition(3*UNIT_PREFIX["centi"], np.pi, 0),
+    CylindricalPosition(1.75*UNIT_PREFIX["centi"], -np.pi/2, 0),
+    CylindricalPosition(1.75*UNIT_PREFIX["centi"], 0, 0),
+    CylindricalPosition(1.75*UNIT_PREFIX["centi"], np.pi/2, 0),
+    CylindricalPosition(1.75*UNIT_PREFIX["centi"], np.pi, 0),
 ]
 cfg.pinger_position = CylindricalPosition(15, np.pi/5, 5)
-n_iter = 300
+n_iter = 500
 
 def plot_xy_distribution(x,y, initial_data, change=""):
     '''
@@ -50,7 +50,7 @@ def plot_xy_distribution(x,y, initial_data, change=""):
     hx = [cyl_to_cart(pos).x for pos in cfg.hydrophone_positions]
     hy = [cyl_to_cart(pos).y for pos in cfg.hydrophone_positions]
 
-    f, (ax1, ax2) = plt.subplots(1, 2, figsize=(10,5))
+    f, (ax1, ax2) = plt.subplots(2, 1, figsize=(10,5))
     
     h = ax1.hist2d(hx, hy, bins=40,
             range=[[-5*UNIT_PREFIX["centi"], 5*UNIT_PREFIX["centi"]], [-5*UNIT_PREFIX["centi"], 5*UNIT_PREFIX["centi"]]])
@@ -60,7 +60,7 @@ def plot_xy_distribution(x,y, initial_data, change=""):
     f.colorbar(h[3], ax=ax1)
     
     h = ax2.hist2d(x, y, density=True, range=[[-50, 50], [-50, 50]], bins=40)
-    ax2.scatter(hx, hy, label="Hydrophone", c = 'white')
+    ax2.scatter(hx, hy, label="Hydrophones", c = 'white')
     ax2.scatter(cyl_to_cart(cfg.pinger_position).x, cyl_to_cart(cfg.pinger_position).y, 
                 label="Pinger", c='orange')
     ax2.scatter(polar_to_cart2d(initial_data["initial_guess"]).x, polar_to_cart2d(initial_data["initial_guess"]).y, 
