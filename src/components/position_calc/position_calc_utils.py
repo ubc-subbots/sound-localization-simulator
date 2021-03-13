@@ -6,7 +6,8 @@ Contains a variety of helper functions to be used across all position calculatio
 '''
 import numpy as np
 from scipy import optimize
-from simulator_main import sim_config as cfg
+#from simulator_main import sim_config as global_vars
+import global_vars
 from sim_utils.common_types import *
 from sim_utils.output_utils import initialize_logger
 
@@ -151,20 +152,20 @@ def tdoa_function_3D(pinger_pos, hydrophone_pos, is_polar):
     '''
     # in this case, pinger_pos[0] is r and pinger_pos[1] is phi
     if (is_polar):    
-        pinger_distance = np.sqrt(pinger_pos[0]**2 + cfg.pinger_position.z**2)
-        delta_z = cfg.pinger_position.z - hydrophone_pos.z
+        pinger_distance = np.sqrt(pinger_pos[0]**2 + global_vars.pinger_position.z**2)
+        delta_z = global_vars.pinger_position.z - hydrophone_pos.z
         delta_phi = pinger_pos[1] - hydrophone_pos.phi
         
         delta_d = np.sqrt(pinger_pos[0]**2 + hydrophone_pos.r**2 + delta_z**2
                     - 2*pinger_pos[0]*hydrophone_pos.r*np.cos(delta_phi))
     # in this case, pinger_pos[0] is x and pinger_pos[1] is y
     else:
-        pinger_distance = np.sqrt(pinger_pos[0]**2 + pinger_pos[1]**2 + cfg.pinger_position.z**2)
+        pinger_distance = np.sqrt(pinger_pos[0]**2 + pinger_pos[1]**2 + global_vars.pinger_position.z**2)
         hydrophone_pos_cart = cyl_to_cart(hydrophone_pos)
         delta_x = pinger_pos[0] - hydrophone_pos_cart.x
         delta_y = pinger_pos[1] - hydrophone_pos_cart.y
-        delta_z = cfg.pinger_position.z - hydrophone_pos.z
+        delta_z = global_vars.pinger_position.z - hydrophone_pos.z
         
         delta_d = np.sqrt(delta_x**2 + delta_y**2 + delta_z**2)
 
-    return (pinger_distance - delta_d)/cfg.speed_of_sound
+    return (pinger_distance - delta_d)/global_vars.speed_of_sound

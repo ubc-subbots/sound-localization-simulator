@@ -1,5 +1,5 @@
 from components.sampling.ideal_adc import IdealADC
-from simulator_main import sim_config as cfg
+import global_vars
 import numpy as np
 
 class IdealADCStage:
@@ -12,7 +12,7 @@ class IdealADCStage:
             setattr(self, key, initial_data[key])
 
         # as many channels as there are hydrophones
-        self.num_components = len(cfg.hydrophone_positions)
+        self.num_components = len(global_vars.hydrophone_positions)
 
         self.components = [
             self.create_component(i, initial_data)

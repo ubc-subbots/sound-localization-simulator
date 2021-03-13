@@ -1,4 +1,4 @@
-from simulator_main import sim_config as cfg
+import global_vars
 import numpy as np
 
 class GaussianNoise:

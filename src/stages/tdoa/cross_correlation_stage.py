@@ -1,4 +1,4 @@
-from simulator_main import sim_config as cfg
+import global_vars
 from components.tdoa.cross_correlation import CrossCorrelation
 import numpy as np
 import sim_utils.plt_utils as plt
@@ -15,7 +15,7 @@ class CrossCorrelationStage:
             setattr(self, key, initial_data[key])
 
         # always using hydrophone 0 as reference
-        self.num_components = len(cfg.hydrophone_positions) - 1
+        self.num_components = len(global_vars.hydrophone_positions) - 1
 
         self.components = [
             self.create_component(i, initial_data)

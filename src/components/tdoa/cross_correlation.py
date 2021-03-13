@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 from scipy.signal import correlate
 import numpy as np
-from simulator_main import sim_config as cfg
+import global_vars
 import logging
 from sim_utils.output_utils import initialize_logger
 
@@ -19,7 +19,7 @@ class CrossCorrelation:
         cross_correlation = correlate(h0_sig, h_sig, mode='same')
         
         # find discrete signal frequency
-        f = cfg.signal_frequency / cfg.sampling_frequency
+        f = global_vars.signal_frequency / global_vars.sampling_frequency
         # find number of samples per signal period
         N = int(np.ceil(1/f))
         # constrain region of interest based on signal periodicity
@@ -35,7 +35,7 @@ class CrossCorrelation:
 
         maxima_idx = np.argmax(roi) - halfrange
 
-        return maxima_idx / cfg.sampling_frequency
+        return maxima_idx / global_vars.sampling_frequency
 
     def write_frame(self, frame):
         return {}

@@ -1,6 +1,6 @@
 from components.position_calc.nls_position_calc import NLSPositionCalc
 from components.position_calc import position_calc_utils
-from simulator_main import sim_config as cfg
+import global_vars
 from simulator_main import args
 from sim_utils.common_types import *
 import numpy as np
@@ -23,15 +23,15 @@ class ChangingVariable(Enum):
     PingerPosition = 3
 
 # set global configuration
-cfg.speed_of_sound = 1500 #m/s
-cfg.hydrophone_positions = [
+global_vars.speed_of_sound = 1500 #m/s
+global_vars.hydrophone_positions = [
     CylindricalPosition(0, 0, 0),
     CylindricalPosition(3*UNIT_PREFIX["centi"], -np.pi/2, 0),
     CylindricalPosition(3*UNIT_PREFIX["centi"], 0, 0),
     CylindricalPosition(3*UNIT_PREFIX["centi"], np.pi/2, 0),
     CylindricalPosition(3*UNIT_PREFIX["centi"], np.pi, 0),
 ]
-cfg.pinger_position = CylindricalPosition(15, np.pi/5, 5)
+global_vars.pinger_position = CylindricalPosition(15, np.pi / 5, 5)
 n_iter = 300
 
 def plot_xy_distribution(x,y, initial_data, change=""):
@@ -47,8 +47,8 @@ def plot_xy_distribution(x,y, initial_data, change=""):
                             the script. Passing this allows the titles of multiple plots produced 
                             by this script to track the current value of the changing variable    
     '''
-    hx = [cyl_to_cart(pos).x for pos in cfg.hydrophone_positions]
-    hy = [cyl_to_cart(pos).y for pos in cfg.hydrophone_positions]
+    hx = [cyl_to_cart(pos).x for pos in global_vars.hydrophone_positions]
+    hy = [cyl_to_cart(pos).y for pos in global_vars.hydrophone_positions]
 
     f, (ax1, ax2) = plt.subplots(1, 2, figsize=(10,5))
     
@@ -61,7 +61,7 @@ def plot_xy_distribution(x,y, initial_data, change=""):
     
     h = ax2.hist2d(x, y, density=True, range=[[-50, 50], [-50, 50]], bins=40)
     ax2.scatter(hx, hy, label="Hydrophone", c = 'white')
-    ax2.scatter(cyl_to_cart(cfg.pinger_position).x, cyl_to_cart(cfg.pinger_position).y, 
+    ax2.scatter(cyl_to_cart(global_vars.pinger_position).x, cyl_to_cart(global_vars.pinger_position).y,
                 label="Pinger", c='orange')
     ax2.scatter(polar_to_cart2d(initial_data["initial_guess"]).x, polar_to_cart2d(initial_data["initial_guess"]).y, 
                 label="Position Guess", c = 'red')
@@ -114,14 +114,14 @@ def visualize_NLS_data(pinger_guess, noise_stdev, n_iters, change_var = Changing
 
     def _true_time_of_arrival(hydrophone_position):
         return position_calc_utils.tdoa_function_3D(
-            np.array([cfg.pinger_position.r, cfg.pinger_position.phi]),
+            np.array([global_vars.pinger_position.r, global_vars.pinger_position.phi]),
             hydrophone_position,
             True
         )
 
     true_tdoa = tuple(
         _true_time_of_arrival(hydrophone_position)
-        for hydrophone_position in cfg.hydrophone_positions[1:]
+        for hydrophone_position in global_vars.hydrophone_positions[1:]
     )
 
     NLS_outputs = []
@@ -131,8 +131,8 @@ def visualize_NLS_data(pinger_guess, noise_stdev, n_iters, change_var = Changing
         predicted_pos = component.apply(tdoa)
         NLS_outputs.append(predicted_pos)
 
-    r_err = [(pos.r - cfg.pinger_position.r) for pos in NLS_outputs]
-    phi_err = [(pos.phi - cfg.pinger_position.phi)*CONV_2_DEG for pos in NLS_outputs]
+    r_err = [(pos.r - global_vars.pinger_position.r) for pos in NLS_outputs]
+    phi_err = [(pos.phi - global_vars.pinger_position.phi) * CONV_2_DEG for pos in NLS_outputs]
     x = [cyl_to_cart(pos).x for pos in NLS_outputs]
     y = [cyl_to_cart(pos).y for pos in NLS_outputs]
 
@@ -143,7 +143,7 @@ def visualize_NLS_data(pinger_guess, noise_stdev, n_iters, change_var = Changing
     elif (change_var == ChangingVariable.PingerGuess):
         change = " Initial Guess: r=" + str(round(pinger_guess.r,1)) + " " + r'$\phi =$' + str(round(pinger_guess.phi*CONV_2_DEG,1))
     else:
-        change = " Pinger Position: r=" + str(round(cfg.pinger_position.r,1)) + " " + r'$\phi =$' + str(round(cfg.pinger_position.phi*CONV_2_DEG,1)) + " " + "z=" + str(round(cfg.pinger_position.z,1))
+        change = " Pinger Position: r=" + str(round(global_vars.pinger_position.r, 1)) + " " + r'$\phi =$' + str(round(global_vars.pinger_position.phi * CONV_2_DEG, 1)) + " " + "z=" + str(round(global_vars.pinger_position.z, 1))
 
     if (plot_error_hist):
         plot_error_histograms(r_err, phi_err, change)
@@ -171,7 +171,7 @@ if __name__ == "__main__":
         change_var = ChangingVariable.HydrophonePositions
         visualize_NLS_data(PolarPosition(30, 180/CONV_2_DEG), 1, n_iter, change_var)
 
-        cfg.hydrophone_positions = [
+        global_vars.hydrophone_positions = [
             CylindricalPosition(0, 0, 0),
             CylindricalPosition(1*UNIT_PREFIX["centi"], -np.pi/2, 0),
             CylindricalPosition(1*UNIT_PREFIX["centi"], 0, 0),
@@ -181,7 +181,7 @@ if __name__ == "__main__":
 
         visualize_NLS_data(PolarPosition(30, 180/CONV_2_DEG), 1, n_iter, change_var)
 
-        cfg.hydrophone_positions = [
+        global_vars.hydrophone_positions = [
             CylindricalPosition(0, 0, 0),
             CylindricalPosition(3*UNIT_PREFIX["centi"], -np.pi/2, 0),
             CylindricalPosition(0, 0, 3*UNIT_PREFIX["centi"]),
@@ -192,7 +192,7 @@ if __name__ == "__main__":
         visualize_NLS_data(PolarPosition(30, 180/CONV_2_DEG), 1, n_iter, change_var)
         visualize_NLS_data(PolarPosition(30, 0), 1, n_iter, change_var)
 
-        cfg.hydrophone_positions = [
+        global_vars.hydrophone_positions = [
             CylindricalPosition(0, 0, 0),
             CylindricalPosition(1*UNIT_PREFIX["centi"], -np.pi/2, 0),
             CylindricalPosition(2*UNIT_PREFIX["centi"], 0, 0),
@@ -203,7 +203,7 @@ if __name__ == "__main__":
         visualize_NLS_data(PolarPosition(30, 180/CONV_2_DEG), 1, n_iter, change_var)
 
         # reset hydrophone positions
-        cfg.hydrophone_positions = [
+        global_vars.hydrophone_positions = [
             CylindricalPosition(0, 0, 0),
             CylindricalPosition(3*UNIT_PREFIX["centi"], -np.pi/2, 0),
             CylindricalPosition(3*UNIT_PREFIX["centi"], 0, 0),
@@ -229,22 +229,22 @@ if __name__ == "__main__":
     if (vary_pinger):
         change_var = ChangingVariable.PingerPosition
 
-        cfg.pinger_position = CylindricalPosition(15, np.pi/4, 0)
+        global_vars.pinger_position = CylindricalPosition(15, np.pi / 4, 0)
         visualize_NLS_data(PolarPosition(30, 180/CONV_2_DEG), 1, n_iter, change_var)
             
-        cfg.pinger_position = CylindricalPosition(15, np.pi/4, 1)
+        global_vars.pinger_position = CylindricalPosition(15, np.pi / 4, 1)
         visualize_NLS_data(PolarPosition(30, 180/CONV_2_DEG), 1, n_iter, change_var)
 
-        cfg.pinger_position = CylindricalPosition(15, np.pi/4, 5)
+        global_vars.pinger_position = CylindricalPosition(15, np.pi / 4, 5)
         visualize_NLS_data(PolarPosition(30, 180/CONV_2_DEG), 1, n_iter, change_var)
 
-        cfg.pinger_position = CylindricalPosition(15, np.pi/4, -10)
+        global_vars.pinger_position = CylindricalPosition(15, np.pi / 4, -10)
         visualize_NLS_data(PolarPosition(30, 180/CONV_2_DEG), 1, n_iter, change_var)
 
-        cfg.pinger_position = CylindricalPosition(5, -np.pi/2, 10)
+        global_vars.pinger_position = CylindricalPosition(5, -np.pi / 2, 10)
         visualize_NLS_data(PolarPosition(30, 180/CONV_2_DEG), 1, n_iter, change_var)
 
-        cfg.pinger_position = CylindricalPosition(40, np.pi/2, 10)
+        global_vars.pinger_position = CylindricalPosition(40, np.pi / 2, 10)
         visualize_NLS_data(PolarPosition(30, 180/CONV_2_DEG), 1, n_iter, change_var)
 
     plt.show()

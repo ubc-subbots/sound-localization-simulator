@@ -8,7 +8,7 @@ problem.
 
 from components.position_calc import position_calc_utils
 import numpy as np
-from simulator_main import sim_config as cfg
+import global_vars
 from sim_utils.common_types import *
 
 class NLSPositionCalc:
@@ -67,7 +67,7 @@ class NLSPositionCalc:
         @param sim_signal   A tuple representing the TDOA values measured by each hydrophone with hydrophone
                             0. The order of TDOA values in the tuple MUST follow the order of hydrophones
                             specified in the config file. For example, the first value in the tuple will be
-                            the TDOA between cfg.hydrophone_positions[1] and cfg.hydrophone_positions[0]
+                            the TDOA between global_vars.hydrophone_positions[1] and global_vars.hydrophone_positions[0]
                             (specifically t1-t0)
         '''        
         # argument to the minimizer must be a numpy array
@@ -89,9 +89,9 @@ class NLSPositionCalc:
                                 str(self.optimization_type))
 
         if(self.is_polar):
-            return CylindricalPosition(pinger_pos[0], pinger_pos[1], cfg.pinger_position.z)
+            return CylindricalPosition(pinger_pos[0], pinger_pos[1], global_vars.pinger_position.z)
         else:
-            return CartesianPosition(pinger_pos[0], pinger_pos[1], cfg.pinger_position.z)
+            return CartesianPosition(pinger_pos[0], pinger_pos[1], global_vars.pinger_position.z)
 
     def write_frame(self, frame):
         return {}
@@ -111,14 +111,14 @@ def get_squared_error_sum(pinger_pos, is_polar, *hydrophone_tdoas):
                                 order of TDOA values in the tuple MUST follow the order of 
                                 hydrophones specified in the config file. For example, the first 
                                 value in the tuple will be the TDOA between 
-                                cfg.hydrophone_positions[1] and cfg.hydrophone_positions[0]
+                                global_vars.hydrophone_positions[1] and global_vars.hydrophone_positions[0]
                                 (specifically t1-t0)
     @return                     The sum of square of the error calculated for each hydrophone
                                 with the given pinger position
     '''
     expected_delta_t_vals = [
         position_calc_utils.tdoa_function_3D(pinger_pos, position, is_polar) 
-        for position in cfg.hydrophone_positions[1:]
+        for position in global_vars.hydrophone_positions[1:]
     ]
 
     r = pinger_pos[0] if is_polar else np.sqrt(pinger_pos[0]**2 + pinger_pos[1]**2)

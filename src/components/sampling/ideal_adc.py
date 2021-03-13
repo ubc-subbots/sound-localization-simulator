@@ -7,7 +7,7 @@ The component modelling an ideal analog to digital converter (ADC)
 
 import numpy as np
 from sim_utils.common_types import *
-from simulator_main import sim_config as cfg
+import global_vars
 
 class IdealADC:
 
@@ -16,8 +16,8 @@ class IdealADC:
             setattr(self, key, initial_data[key])
 
     def apply(self, sim_signal):
-        # downsamples signal from cfg.continuous_sampling_frequency to cfg.sampling_frequency
-        sampled_signal = downsample(sim_signal, cfg.continuous_sampling_frequency, cfg.sampling_frequency)
+        # downsamples signal from global_vars.continuous_sampling_frequency to global_vars.sampling_frequency
+        sampled_signal = downsample(sim_signal, global_vars.continuous_sampling_frequency, global_vars.sampling_frequency)
         # map signal from continuous values to an unsigned integers of size self.num_bits
         # uses either midrise or midtread quantization as specified by self.quantization_method
         quantized_signal = quantize(sampled_signal, self.num_bits, self.quantization_method)

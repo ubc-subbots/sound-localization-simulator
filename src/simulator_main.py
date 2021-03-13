@@ -11,6 +11,7 @@ from datetime import datetime
 from importlib import import_module
 from sim_utils.common_types import cyl_to_cart, polar_to_cart2d
 from sim_utils import output_utils
+import global_vars
 
 ##################################################
 # Process Command Line Args
@@ -33,7 +34,7 @@ args = parser.parse_args()
 ##################################################
 # Dynamically Configure
 ##################################################
-sim_config = import_module(args.config)
+#sim_config = import_module(args.config)
 
 # configure logging parameters
 output_utils.configure_logger(args.log_level, args.config)
@@ -51,10 +52,10 @@ if __name__ == "__main__":
 
 	# construct simulation chain from configuration file
 	logger.info("Parsing simulator chain...")
-	simulation_chain = config_parser.generate_sim_chain(sim_config.simulation_chain)
+	simulation_chain = config_parser.generate_sim_chain(global_vars.simulation_chain)
 
 	# create initial simulation data frame from configuration file
-	frame = config_parser.generate_frame(sim_config)
+	frame = config_parser.generate_frame(global_vars)
 
 	# create initial simulation signal
 	sim_signal = None
