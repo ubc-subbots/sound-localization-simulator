@@ -9,11 +9,12 @@ import numpy as np
 from sim_utils.common_types import *
 import global_vars
 
+
 class IdealADC:
 
-    def __init__(self, initial_data):
-        for key in initial_data:
-            setattr(self, key, initial_data[key])
+    def __init__(self, num_bits, quantization_method):
+        self.num_bits = num_bits
+        self.quantization_method = quantization_method
 
     def apply(self, sim_signal):
         # downsamples signal from global_vars.continuous_sampling_frequency to global_vars.sampling_frequency
@@ -30,6 +31,7 @@ class IdealADC:
     def write_frame(self, frame):
         pass
 
+
 def downsample(signal, fs_old, fs_new):
     # adjust new signal length based on sampling rate reduction
     index_sample_rate = fs_new / fs_old
@@ -43,6 +45,7 @@ def downsample(signal, fs_old, fs_new):
 
     return np.array(sampled_signal)
 
+
 def quantize(signal, num_bits, quantization_method):
     # number of quantization levels
     L = 2**num_bits
@@ -53,17 +56,17 @@ def quantize(signal, num_bits, quantization_method):
     # find quantization delta
     delta = max(sig) / L
 
-    if (quantization_method == QuantizationType.midrise):
+    if quantization_method == QuantizationType.midrise:
         quantized_signal = [
             int(value/delta)
             for value in sig 
         ]
-    elif (quantization_method == QuantizationType.midtread):
+    elif quantization_method == QuantizationType.midtread:
         quantized_signal = [
             int(value/delta + 0.5)
             for value in sig
         ]
     else:
-        raise ValueError("Illegal Quanitzation Type: " + str(type(quantization_method)))
+        raise ValueError(f"Illegal Quantization Type: {str(type(quantization_method))}")
 
     return np.array(quantized_signal)

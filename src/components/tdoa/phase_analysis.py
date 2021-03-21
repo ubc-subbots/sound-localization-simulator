@@ -3,9 +3,8 @@ import global_vars
 
 class PhaseAnalysis:
     
-    def __init__(self, initial_data):
-        for key in initial_data:
-            setattr(self, key, initial_data[key])
+    def __init__(self, identifier):
+        self.identifier = identifier
 
     def apply(self, sim_signal):
         hydrophone0_phase = get_phase(sim_signal[0])
@@ -15,6 +14,7 @@ class PhaseAnalysis:
 
     def write_frame(self, frame):
         return {}
+
 
 # I can likely get this without a sampling frequency, but that is a todo:
 def get_phase(input_signal):

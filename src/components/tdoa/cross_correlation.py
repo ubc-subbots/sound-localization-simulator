@@ -9,9 +9,8 @@ from sim_utils.output_utils import initialize_logger
 logger = initialize_logger(__name__)
 
 class CrossCorrelation:
-    def __init__(self, initial_data):
-        for key in initial_data:
-            setattr(self, key, initial_data[key])
+    def __init__(self, identifier):
+        self.identifier = identifier
 
     def apply(self, sim_signal):
         # compute cross correlation
@@ -46,4 +45,4 @@ class CrossCorrelation:
         plt.figure()
         plt.plot(n, cross_correlation)
         plt.plot(n[center_idx-halfrange:center_idx+halfrange] ,roi)
-        plt.title(self.id)
+        plt.title(self.identifier)

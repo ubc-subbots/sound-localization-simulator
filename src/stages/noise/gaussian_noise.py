@@ -1,13 +1,14 @@
 import global_vars
 import numpy as np
 
+
 class GaussianNoise:
     '''
     adds gaussian noise at the configured mean and standard deviation
     '''
-    def __init__(self, initial_data):
-        for key in initial_data:
-            setattr(self, key, initial_data[key])
+    def __init__(self, mu, sigma):
+        self.mu = mu
+        self.sigma = sigma
 
     def apply(self, sim_signal):
         noisy_sigs = tuple(

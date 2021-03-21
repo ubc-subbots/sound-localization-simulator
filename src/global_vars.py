@@ -1,7 +1,13 @@
 from sim_utils.common_types import *
 
 ##############################################
-# Gloabl Parameters
+# Procedural Parameters
+##############################################
+
+num_iterations = 1
+
+##############################################
+# Content Parameters
 ##############################################
 
 speed_of_sound = 1500 #m/s
@@ -24,40 +30,3 @@ sampling_frequency = 20*signal_frequency
 continuous_sampling_frequency = 100*signal_frequency
 # TODO: double check pinger on-off frequency
 carrier_frequency = 1
-
-simulation_chain = [
-    {
-        "component_name"        : "InputGenerationStage",
-        "id"                    : "Input Generation Stage",
-        "measurement_period"    : 2,
-        "duty_cycle"            : 0.05
-    },
-    {
-        "component_name"        : "GaussianNoise",
-        "id"                    : "Gaussian Noise",
-        "mu"                    : 0,
-        "sigma"                 : 0.01
-    },
-    {
-        "component_name"        : "IdealADCStage",
-        "id"                    : "ideal ADC stage",
-        "num_bits"              : 12,
-        "quantization_method"   : QuantizationType.midtread
-    },
-    {
-        "component_name"        : "ThresholdCaptureTrigger",
-        "id"                    : "Threshold Capture Trigger",
-        "num_samples"           : int(10 * (sampling_frequency / signal_frequency)), # sample 10 cycles of the wave
-        "threshold"             : 0.05*(2**11)
-    },
-    {
-        "component_name"        : "CrossCorrelationStage",
-        "id"                    : "Cross Correlation Stage",
-    },
-    {
-        "component_name"        : "NLSPositionCalc",
-        "id"                    : "NLS",
-        "optimization_method"   : OptimizationType.nelder_mead,
-        "initial_guess"         : PolarPosition(10, np.pi)
-    }
-]

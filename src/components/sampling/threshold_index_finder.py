@@ -5,9 +5,9 @@ class ThresholdIndexFinder:
     Finds the index at which the signal first crosses a certain threshold
     '''
 
-    def __init__(self, initial_data):
-        for key in initial_data:
-            setattr(self, key, initial_data[key])
+    def __init__(self, num_samples, threshold):
+        self.num_samples = num_samples
+        self.threshold = threshold
 
     def apply(self, sim_signal):
         for i in range(len(sim_signal)):
@@ -15,4 +15,4 @@ class ThresholdIndexFinder:
                 return i
 
     def write_frame(self, frame):
-        return frame        
+        return frame

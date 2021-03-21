@@ -76,6 +76,7 @@ def gradient_descent(func, starting_params, args=(), step_size=0.5, termination_
     logger.info("Gradient Descent with step-size %f finished after %0d iterations" %(step_size, num_iter))
     return params
 
+
 def nelder_mead(func, starting_params, args=()):
     '''
     @brief Implements nelder mead optimization on the given function
@@ -101,8 +102,10 @@ def nelder_mead(func, starting_params, args=()):
 
     return results.x
 
+
 def newton_gauss(func, starting_params, args=()):
     pass
+
 
 def get_grad(func, params, args, delta_x):
     '''
@@ -118,6 +121,7 @@ def get_grad(func, params, args, delta_x):
     '''
     return np.array([get_partial_derivative(func, params, args, i, delta_x)
                     for i in range(len(params))])
+
 
 def get_partial_derivative(func, params, args, var_index, delta_x):
     '''
@@ -136,6 +140,7 @@ def get_partial_derivative(func, params, args, var_index, delta_x):
     delta_params[var_index] = delta_x
 
     return (func(params + delta_params, *args) - func(params, *args))/delta_x
+
 
 def tdoa_function_3D(pinger_pos, hydrophone_pos, is_polar):
     '''

@@ -15,10 +15,10 @@ class InputGeneration:
         represents the output of the pinger more than the response of the hydrophone, but for
         prototyping purposes it takes in hydrophone + pinger distances and calculates the phase.
     """
-    def __init__(self, initial_data):
-        for key in initial_data:
-            setattr(self, key, initial_data[key])
-
+    def __init__(self, hydrophone_position, measurement_period, duty_cycle):
+        self.hydrophone_position = hydrophone_position
+        self.measurement_period = measurement_period
+        self.duty_cycle = duty_cycle
 
     def _square_wave(self, sampling_frequency, square_wave_frequency,
                       measurement_period, duty_cycle):
@@ -49,7 +49,6 @@ class InputGeneration:
         square_wave /= 2.0
         
         return square_wave
-
     
     def _sine_wave(self, sampling_frequency, sine_wave_frequency, measurement_period, phase_time):
         """

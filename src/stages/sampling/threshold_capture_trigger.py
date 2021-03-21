@@ -1,6 +1,7 @@
 import global_vars
 from components.sampling.threshold_index_finder import ThresholdIndexFinder
 
+
 class ThresholdCaptureTrigger:
     '''
     captures a certain segment of the signal based on the specified threshold.
@@ -10,17 +11,19 @@ class ThresholdCaptureTrigger:
     This emulates the fact that our system can only grab a portion of the signal.
     '''
 
-    def __init__(self, initial_data):
-        for key in initial_data:
-            setattr(self, key, initial_data[key])
+    def __init__(self, num_samples, threshold):
+        self.num_samples = num_samples
+        self.threshold = num_samples
 
         # instantiate a threshold time finder for each component
         self.num_components = len(global_vars.hydrophone_positions)
 
-        self.components = [
-            self.create_component(i, initial_data)
-            for i in range(self.num_components)
-        ]
+        # Create ThresholdIndexFinder
+        self.components = []
+        for i in range(self.num_components):
+            self.components.append(
+                ThresholdIndexFinder(num_samples, threshold)
+            )
 
     def apply(self, sim_signal):
         # find the point at which the signals cross the treshold
@@ -40,9 +43,3 @@ class ThresholdCaptureTrigger:
 
     def write_frame(self, frame):
         pass
-
-    def create_component(self, component_index, stage_initial_data):
-        initial_data = stage_initial_data
-        initial_data["id"] = "Threshold Time Finder [" + str(component_index) + "]"
-
-        return ThresholdIndexFinder(initial_data)
