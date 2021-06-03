@@ -1,12 +1,12 @@
 from components.tdoa.cross_correlation import CrossCorrelation
 import matplotlib.pyplot as plt
-from simulator_main import sim_config as cfg
+import global_vars
 import numpy as np
 
 def test_lag_finder(): 
     # Sine sample with some noise and copy to y1 and y2 with a 1-second lag
-    sample_rate = cfg.sampling_frequency
-    signal_frequency = cfg.signal_frequency
+    sample_rate = global_vars.sampling_frequency
+    signal_frequency = global_vars.signal_frequency
     f = signal_frequency / sample_rate
     print(f)
     n = np.linspace(0, round(5/f), int(round(5/f)))

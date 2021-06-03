@@ -6,7 +6,7 @@
 import numpy as np
 from scipy import signal
 from collections import namedtuple
-from simulator_main import sim_config as cfg
+import global_vars
 from sim_utils.common_types import * # TODO: figure out why this feels wrong
 
 class InputGeneration:
@@ -15,10 +15,10 @@ class InputGeneration:
         represents the output of the pinger more than the response of the hydrophone, but for
         prototyping purposes it takes in hydrophone + pinger distances and calculates the phase.
     """
-    def __init__(self, initial_data):
-        for key in initial_data:
-            setattr(self, key, initial_data[key])
-
+    def __init__(self, hydrophone_position, measurement_period, duty_cycle):
+        self.hydrophone_position = hydrophone_position
+        self.measurement_period = measurement_period
+        self.duty_cycle = duty_cycle
 
     def _square_wave(self, sampling_frequency, square_wave_frequency,
                       measurement_period, duty_cycle):
@@ -49,7 +49,6 @@ class InputGeneration:
         square_wave /= 2.0
         
         return square_wave
-
     
     def _sine_wave(self, sampling_frequency, sine_wave_frequency, measurement_period, phase_time):
         """
@@ -75,7 +74,7 @@ class InputGeneration:
         return np.sin(2 * np.pi * sine_wave_frequency * t_sampling + phase)
     
     def _add_leading_zeros(self, signal, propogation_time):
-        num_zeros = propogation_time * cfg.continuous_sampling_frequency
+        num_zeros = propogation_time * global_vars.continuous_sampling_frequency
         return np.concatenate(
             (np.zeros(int(num_zeros)), signal),
             axis=None
@@ -94,14 +93,14 @@ class InputGeneration:
                 <expected number of leading zeros of the closest hydrophone> less than expected.
                 This is to remove leading zeros that do not affect analysis.
         """
-        distance = distance_3Dpoints(self.hydrophone_position, cfg.pinger_position)
+        distance = distance_3Dpoints(self.hydrophone_position, global_vars.pinger_position)
         
-        propogation_time = distance / cfg.speed_of_sound
+        propogation_time = distance / global_vars.speed_of_sound
         leading_zeros_t = propogation_time
 
         sine_wave = self._sine_wave(
-            cfg.continuous_sampling_frequency,
-            cfg.signal_frequency,
+            global_vars.continuous_sampling_frequency,
+            global_vars.signal_frequency,
             self.measurement_period - leading_zeros_t,
             0
         )
@@ -109,8 +108,8 @@ class InputGeneration:
         sine_wave = self._add_leading_zeros(sine_wave, leading_zeros_t)
 
         carrier_wave = self._square_wave(
-            cfg.continuous_sampling_frequency,
-            cfg.carrier_frequency,
+            global_vars.continuous_sampling_frequency,
+            global_vars.carrier_frequency,
             self.measurement_period - leading_zeros_t, 
             self.duty_cycle
         )

@@ -1,20 +1,22 @@
 from sim_utils.input_generation import InputGeneration
-from simulator_main import sim_config as cfg
+import global_vars
 import numpy as np
+
 
 class InputGenerationStage:
     
-    def __init__(self, initial_data):
-        for key in initial_data:
-            setattr(self, key, initial_data[key])
-
+    def __init__(self, measurement_period, duty_cycle):
         # as many channels as there are hydrophones
-        self.num_components = len(cfg.hydrophone_positions)
+        self.num_components = len(global_vars.hydrophone_positions)
 
-        self.components = [
-            self.create_component(i, initial_data)
-            for i in range(self.num_components)
-        ]
+        # Create InputGeneration
+        self.components = []
+        # add hydrophone position based on component index
+        for i in range(self.num_components):
+            hydrophone_position = global_vars.hydrophone_positions[i]
+            self.components.append(
+                InputGeneration(hydrophone_position, measurement_period, duty_cycle)
+            )
 
     def apply(self, sim_signal):
         return tuple(
@@ -24,13 +26,3 @@ class InputGenerationStage:
 
     def write_frame(self, frame):
         pass
-    
-    def create_component(self, component_index, stage_initial_data):
-        initial_data = stage_initial_data
-        # adjust component name to indicate channel
-        initial_data["id"] = "Input Generation [" + str(component_index) + "]"
-
-        # add hydrophone position based on component index
-        initial_data["hydrophone_position"] = cfg.hydrophone_positions[component_index]
-
-        return InputGeneration(initial_data)

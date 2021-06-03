@@ -17,6 +17,7 @@ import argparse
 log_level = None
 config = None
 
+
 def create_output_file(frame_data, pickle_path, xml_path):
     # Save dictionary to pickle file which will be passed through simulation.
     with open(pickle_path, 'wb+') as fp:
@@ -29,10 +30,12 @@ def create_output_file(frame_data, pickle_path, xml_path):
     outputFile = open(xml_path, "w+")
     outputFile.write(dom.toprettyxml())
 
+
 def configure_logger(log_lvl, cfg):
     global log_level, config
     config = cfg
     log_level = log_lvl
+
 
 def initialize_logger(logger_name):
     # create new logfile when starting simulator main, append for other modules
@@ -43,7 +46,9 @@ def initialize_logger(logger_name):
         name = logger_name
         file_mode = 'a'
 
-    filename= "log/%s.log" % config
+    configure_logger(logging.NOTSET, 'default.log')
+
+    filename = "log/%s.log" % config # TODO: Create the folder if not exists
     # create logger
     logger = logging.getLogger(name)
     logger.setLevel(log_level)
@@ -56,8 +61,7 @@ def initialize_logger(logger_name):
     # add formatter to ch
     console.setFormatter(formatter)
 
-
-    # create file handler    
+    # create file handler
     logfile = logging.FileHandler(filename, mode=file_mode, encoding='utf-8')
     logfile.setLevel(log_level)
     # create formatter - add date to log file
