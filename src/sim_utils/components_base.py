@@ -3,18 +3,34 @@ USUSLS Simulator
 Module referencing the component name to it's relative file path in the system.
 Author: Michael Ko
 '''
+'''
+class butterworth_filter:
+
+    def __init__(self, initial_data):
+        for key in initial_data:
+            setattr(self, key, initial_data[key])
+
+class cross_correlator:
+
+    def __init__(self, initial_data):
+        for key in initial_data:
+            setattr(self, key, initial_data[key])
+'''
+'''
+test_config = [
+    {
+        "butterworth_filter" : "test1"
+        "Path" : "src/components/TDOA_position_calculation"
+    },
+
+    {
+        "Component_name" : "cross_correlator",
+        "Path" : "src/components/time_difference_calculations"
+    }
+]
+'''
 
 database = {
-    "InputGeneration"           : "sim_utils.input_generation",
-    "InputGenerationStage"      : "stages.input.input_generation_stage",
-    "GaussianNoise"             : "stages.noise.gaussian_noise",
-    "IdealADC"                  : "components.sampling.ideal_adc",
-    "IdealADCStage"             : "stages.sampling.ideal_adc_stage",
-    "ThresholdIndexFinder"      : "components.sampling.threshold_index_finder",
-    "ThresholdCaptureTrigger"   : "stages.sampling.threshold_capture_trigger",
-    "PhaseAnalysis"             : "components.tdoa.phase_analysis",
-    "PhaseAnalysisStage"        : "stages.tdoa.phase_analysis_stage",
-    "CrossCorrelation"          : "components.tdoa.cross_correlation",
-    "CrossCorrelationStage"     : "stages.tdoa.cross_correlation_stage",
-    "NLSPositionCalc"           : "components.position_calc.nls_position_calc"
+    "NLS_position_calc" : 'components.position_calc.NLS_position_calc',
+    "cross_correlator" : ["test2", 'src/components/time_difference_calculations/test2.py']
 }
