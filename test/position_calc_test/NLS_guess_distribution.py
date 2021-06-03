@@ -1,4 +1,4 @@
-from components.position_calc.nls_position_calc import NLSPositionCalc
+from components.position_calc.NLS_position_calc import NLS_position_calc, get_squared_error_sum
 from components.position_calc import position_calc_utils
 from simulator_main import sim_config as cfg
 from simulator_main import args
@@ -11,7 +11,7 @@ from enum import Enum
 vary_noise =        False
 vary_pinger =       False
 vary_guess =        False
-vary_hydrophones =  True
+vary_hydrophones =  False
 
 class ChangingVariable(Enum):
     '''
@@ -26,10 +26,10 @@ class ChangingVariable(Enum):
 cfg.speed_of_sound = 1500 #m/s
 cfg.hydrophone_positions = [
     CylindricalPosition(0, 0, 0),
-    CylindricalPosition(3*UNIT_PREFIX["centi"], -np.pi/2, 0),
-    CylindricalPosition(3*UNIT_PREFIX["centi"], 0, 0),
-    CylindricalPosition(3*UNIT_PREFIX["centi"], np.pi/2, 0),
-    CylindricalPosition(3*UNIT_PREFIX["centi"], np.pi, 0),
+    CylindricalPosition(3*DISTANCE_CONV["cm"], -np.pi/2, 0),
+    CylindricalPosition(3*DISTANCE_CONV["cm"], 0, 0),
+    CylindricalPosition(3*DISTANCE_CONV["cm"], np.pi/2, 0),
+    CylindricalPosition(3*DISTANCE_CONV["cm"], np.pi, 0),
 ]
 cfg.pinger_position = CylindricalPosition(15, np.pi/5, 5)
 n_iter = 300
@@ -47,13 +47,13 @@ def plot_xy_distribution(x,y, initial_data, change=""):
                             the script. Passing this allows the titles of multiple plots produced 
                             by this script to track the current value of the changing variable    
     '''
-    hx = [cyl_to_cart(pos).x for pos in cfg.hydrophone_positions]
-    hy = [cyl_to_cart(pos).y for pos in cfg.hydrophone_positions]
+    hx = [cyl_2_cart(pos).x for pos in cfg.hydrophone_positions]
+    hy = [cyl_2_cart(pos).y for pos in cfg.hydrophone_positions]
 
     f, (ax1, ax2) = plt.subplots(1, 2, figsize=(10,5))
     
     h = ax1.hist2d(hx, hy, bins=40,
-            range=[[-5*UNIT_PREFIX["centi"], 5*UNIT_PREFIX["centi"]], [-5*UNIT_PREFIX["centi"], 5*UNIT_PREFIX["centi"]]])
+            range=[[-5*DISTANCE_CONV["cm"], 5*DISTANCE_CONV["cm"]], [-5*DISTANCE_CONV["cm"], 5*DISTANCE_CONV["cm"]]])
     ax1.set_xlabel("x (m)")
     ax1.set_ylabel("y (m)")
     ax1.set_title("Hydrophone Distribution")
@@ -61,9 +61,9 @@ def plot_xy_distribution(x,y, initial_data, change=""):
     
     h = ax2.hist2d(x, y, density=True, range=[[-50, 50], [-50, 50]], bins=40)
     ax2.scatter(hx, hy, label="Hydrophone", c = 'white')
-    ax2.scatter(cyl_to_cart(cfg.pinger_position).x, cyl_to_cart(cfg.pinger_position).y, 
+    ax2.scatter(cyl_2_cart(cfg.pinger_position).x, cyl_2_cart(cfg.pinger_position).y, 
                 label="Pinger", c='orange')
-    ax2.scatter(polar_to_cart2d(initial_data["initial_guess"]).x, polar_to_cart2d(initial_data["initial_guess"]).y, 
+    ax2.scatter(pol_2_cart2d(initial_data["initial_guess"]).x, pol_2_cart2d(initial_data["initial_guess"]).y, 
                 label="Position Guess", c = 'red')
     ax2.set_xlabel("x (m)")
     ax2.set_ylabel("y (m)")
@@ -95,7 +95,7 @@ def plot_error_histograms(r_err, phi_err, change):
 def visualize_NLS_data(pinger_guess, noise_stdev, n_iters, change_var = ChangingVariable.Noise, 
                         plot_error_hist=False):
     '''
-    @brief visualizes the results of the NLSPositionCalc component
+    @brief visualizes the results of the NLS_position_calc component
 
     @param pinger_guess     Initial guess for pinger position
     @param noise_stdev      Standard deviation of gaussian noise injected to time differences
@@ -110,7 +110,7 @@ def visualize_NLS_data(pinger_guess, noise_stdev, n_iters, change_var = Changing
         "optimization_type" : OptimizationType.nelder_mead,
         "initial_guess"     : pinger_guess
     }
-    component = NLSPositionCalc(initial_data)
+    component = NLS_position_calc(initial_data)
 
     def _true_time_of_arrival(hydrophone_position):
         return position_calc_utils.tdoa_function_3D(
@@ -126,15 +126,15 @@ def visualize_NLS_data(pinger_guess, noise_stdev, n_iters, change_var = Changing
 
     NLS_outputs = []
     for i in range(n_iters):
-        noise = [np.random.normal(0, noise_stdev*UNIT_PREFIX['u']) for j in range(len(true_tdoa))]
+        noise = [np.random.normal(0, noise_stdev*TIME_CONV['us']) for j in range(len(true_tdoa))]
         tdoa = [tdoa_val+noise_val for tdoa_val,noise_val in zip(true_tdoa, noise)]
         predicted_pos = component.apply(tdoa)
         NLS_outputs.append(predicted_pos)
 
     r_err = [(pos.r - cfg.pinger_position.r) for pos in NLS_outputs]
     phi_err = [(pos.phi - cfg.pinger_position.phi)*CONV_2_DEG for pos in NLS_outputs]
-    x = [cyl_to_cart(pos).x for pos in NLS_outputs]
-    y = [cyl_to_cart(pos).y for pos in NLS_outputs]
+    x = [cyl_2_cart(pos).x for pos in NLS_outputs]
+    y = [cyl_2_cart(pos).y for pos in NLS_outputs]
 
     if (change_var == ChangingVariable.Noise):
         change = " Noise " + r'$\sigma = $' + str(round(noise_stdev,1)) + r'$\mu s$'
@@ -173,20 +173,20 @@ if __name__ == "__main__":
 
         cfg.hydrophone_positions = [
             CylindricalPosition(0, 0, 0),
-            CylindricalPosition(1*UNIT_PREFIX["centi"], -np.pi/2, 0),
-            CylindricalPosition(1*UNIT_PREFIX["centi"], 0, 0),
-            CylindricalPosition(1*UNIT_PREFIX["centi"], np.pi/2, 0),
-            CylindricalPosition(1*UNIT_PREFIX["centi"], np.pi, 0),
+            CylindricalPosition(1*DISTANCE_CONV["cm"], -np.pi/2, 0),
+            CylindricalPosition(1*DISTANCE_CONV["cm"], 0, 0),
+            CylindricalPosition(1*DISTANCE_CONV["cm"], np.pi/2, 0),
+            CylindricalPosition(1*DISTANCE_CONV["cm"], np.pi, 0),
         ]
 
         visualize_NLS_data(PolarPosition(30, 180/CONV_2_DEG), 1, n_iter, change_var)
 
         cfg.hydrophone_positions = [
             CylindricalPosition(0, 0, 0),
-            CylindricalPosition(3*UNIT_PREFIX["centi"], -np.pi/2, 0),
-            CylindricalPosition(0, 0, 3*UNIT_PREFIX["centi"]),
-            CylindricalPosition(3*UNIT_PREFIX["centi"], np.pi/2, 0),
-            CylindricalPosition(0, 0, -3*UNIT_PREFIX["centi"]),
+            CylindricalPosition(3*DISTANCE_CONV["cm"], -np.pi/2, 0),
+            CylindricalPosition(0, 0, 3*DISTANCE_CONV["cm"]),
+            CylindricalPosition(3*DISTANCE_CONV["cm"], np.pi/2, 0),
+            CylindricalPosition(0, 0, -3*DISTANCE_CONV["cm"]),
         ]
 
         visualize_NLS_data(PolarPosition(30, 180/CONV_2_DEG), 1, n_iter, change_var)
@@ -194,10 +194,10 @@ if __name__ == "__main__":
 
         cfg.hydrophone_positions = [
             CylindricalPosition(0, 0, 0),
-            CylindricalPosition(1*UNIT_PREFIX["centi"], -np.pi/2, 0),
-            CylindricalPosition(2*UNIT_PREFIX["centi"], 0, 0),
-            CylindricalPosition(1*UNIT_PREFIX["centi"], np.pi/2, 1*UNIT_PREFIX["centi"]),
-            CylindricalPosition(3*UNIT_PREFIX["centi"], np.pi, -1*UNIT_PREFIX["centi"]),
+            CylindricalPosition(1*DISTANCE_CONV["cm"], -np.pi/2, 0),
+            CylindricalPosition(2*DISTANCE_CONV["cm"], 0, 0),
+            CylindricalPosition(1*DISTANCE_CONV["cm"], np.pi/2, 1*DISTANCE_CONV["cm"]),
+            CylindricalPosition(3*DISTANCE_CONV["cm"], np.pi, -1*DISTANCE_CONV["cm"]),
         ]
 
         visualize_NLS_data(PolarPosition(30, 180/CONV_2_DEG), 1, n_iter, change_var)
@@ -205,10 +205,10 @@ if __name__ == "__main__":
         # reset hydrophone positions
         cfg.hydrophone_positions = [
             CylindricalPosition(0, 0, 0),
-            CylindricalPosition(3*UNIT_PREFIX["centi"], -np.pi/2, 0),
-            CylindricalPosition(3*UNIT_PREFIX["centi"], 0, 0),
-            CylindricalPosition(3*UNIT_PREFIX["centi"], np.pi/2, 0),
-            CylindricalPosition(3*UNIT_PREFIX["centi"], np.pi, 0),
+            CylindricalPosition(3*DISTANCE_CONV["cm"], -np.pi/2, 0),
+            CylindricalPosition(3*DISTANCE_CONV["cm"], 0, 0),
+            CylindricalPosition(3*DISTANCE_CONV["cm"], np.pi/2, 0),
+            CylindricalPosition(3*DISTANCE_CONV["cm"], np.pi, 0),
         ]
 
     #####################################################

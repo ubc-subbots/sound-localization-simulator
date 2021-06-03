@@ -1,12 +1,11 @@
 from hypothesis import given
 import hypothesis.strategies as st
-
 import sim_utils.input_generation as ig
 import numpy as np
 import math
 import matplotlib.pyplot as plt
 
-input_generation = ig.InputGeneration({"measurement_period" : 0.5, "duty_cycle": 0.1})
+input_generation = ig.InputGeneration({})
 
 
 @given(st.integers(min_value=100, max_value=100000),
@@ -34,8 +33,6 @@ def sines_have_correct_fft(sampling_rate, measurement_period, sine_wave_freq, ph
     big_acceptance_criteria = sine_wave_freq * 0.95 < abs(freqs[index]) < sine_wave_freq * 1.05
     assert small_acceptance_criteria or big_acceptance_criteria
 
-# sines_have_correct_fft()
-# test_sines_are_correct_length()
+sines_have_correct_fft()
+test_sines_are_correct_length()
 
-plt.plot(input_generation.apply(None)[0])
-plt.show()
