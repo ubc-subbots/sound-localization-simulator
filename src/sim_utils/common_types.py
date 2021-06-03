@@ -2,6 +2,16 @@ from enum import Enum
 from collections import namedtuple
 import numpy as np
 
+##################################################################
+# Configuration Enums
+##################################################################
+class QuantizationType(Enum):
+    '''
+    enum used to specifty quanitzation method for ADC
+    '''
+    midrise = 0
+    midtread = 1
+
 class OptimizationType(Enum):
     '''
     enum used to specify optimization method for NLS_position_calc component
@@ -19,55 +29,74 @@ CartesianPosition = namedtuple('CartesianPosition', 'x y z')
 PolarPosition = namedtuple('PolarPosition', 'r phi')
 Cartesian2DPosition = namedtuple('Cartesian2DPosition', 'x y')
 
-def cyl_2_cart(cyl_pos):
+def cyl_to_cart(cyl_pos):
     return CartesianPosition(
         cyl_pos.r*np.cos(cyl_pos.phi), 
         cyl_pos.r*np.sin(cyl_pos.phi), 
         cyl_pos.z
     )
 
-def cart_2_cyl(cart_pos):
+def cart_to_cyl(cart_pos):
     return CylindricalPosition(
         np.sqrt(cart_pos.x**2 + cart_pos.y**2), 
         np.arctan2(cart_pos.y, cart_pos.x), 
         cart_pos.z
     )
 
-def pol_2_cart2d(pol_pos):
+def polar_to_cart2d(pol_pos):
     return Cartesian2DPosition(
         pol_pos.r*np.cos(pol_pos.phi), 
         pol_pos.r*np.sin(pol_pos.phi)
     )
 
-def cart2d_2_pol(cart2d_pos):
+def cart2d_to_polar(cart2d_pos):
     return PolarPosition(
         np.sqrt(cart2d_pos.x**2 + cart2d_pos.y**2), 
         np.arctan2(cart2d_pos.y, cart2d_pos.x)
     )
 
+def distance_3Dpoints(location1, location2):
+    if type(location1).__name__ == "CylindricalPosition":
+        location1 = cyl_to_cart(location1)
+    if type(location2).__name__ == "CylindricalPosition":
+        location2 = cyl_to_cart(location2)
+    
+    return ((location1.x - location2.x) ** 2 
+          + (location1.y - location2.y) ** 2
+          + (location1.z - location2.z) ** 2) ** (1/2)
+
 ##################################################################
 # Unit Conversions
 ##################################################################
-TIME_CONV = {
-    "millisecond": 1e-3,
-    "ms": 1e-3,
-    "microsecond": 1e-6,
-    "us": 1e-6,
-    "nanosecond": 1e-9,
-    "ns": 1e-9,
-    "picosecond": 1e-12,
-    "ps": 1e-12
-}
 
 DISTANCE_CONV = {
-    "cm": 1e-2,
-    "centimeter": 1e-3,
-    "millimeter": 1e-3,
-    "mm": 1e-3,
     "feet": 0.3048,
     "ft": 0.3048,
     "inch": 2.54e-2,
     "in": 2.54e-2
+}
+
+UNIT_PREFIX = {
+    "f"     : 1e-15,
+    "femto" : 1e-15,
+    "p"     : 1e-12,
+    "pico"  : 1e-12,
+    "n"     : 1e-9,
+    "nano"  : 1e-9,
+    "u"     : 1e-6,
+    "micro" : 1e-6,
+    "m"     : 1e-3,
+    "milli" : 1e-3,
+    "c"     : 1e-2,
+    "centi" : 1e-2,
+    "k"     : 1e3,
+    "killo" : 1e3,
+    "M"     : 1e6,
+    "mega"  : 1e6,
+    "G"     : 1e9,
+    "giga"  : 1e9,
+    "T"     : 1e12,
+    "tera"  : 1e12
 }
 
 CONV_2_DEG = 180/np.pi
