@@ -4,12 +4,13 @@ import numpy as np
 import sim_utils.plt_utils as plt
 import logging
 from sim_utils.output_utils import initialize_logger
+from stages.stage import Stage
 
 # create logger object for this module
 logger = initialize_logger(__name__)
 
 
-class CrossCorrelationStage(Component):
+class CrossCorrelationStage(Stage):
 
     def __init__(self):
 

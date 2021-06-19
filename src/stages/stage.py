@@ -1,4 +1,4 @@
-class Component:
+class Stage:
     def __init__(self):
         self.signal = None
 

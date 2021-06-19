@@ -4,8 +4,10 @@ import numpy as np
 from sim_utils.output_utils import initialize_logger
 import logging
 from sim_utils.plt_utils import plot_signals
+from stages.stage import Stage
 
-class IdealADCStage(Component):
+
+class IdealADCStage(Stage):
     '''
     stage to simulate an ADC for every hydrophone signal channel
     '''

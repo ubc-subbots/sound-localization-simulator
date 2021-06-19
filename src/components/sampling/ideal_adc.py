@@ -5,6 +5,7 @@ The component modelling an ideal analog to digital converter (ADC)
 @date Jan 20, 2021
 '''
 
+from components.component import Component
 import numpy as np
 from sim_utils.common_types import *
 import global_vars

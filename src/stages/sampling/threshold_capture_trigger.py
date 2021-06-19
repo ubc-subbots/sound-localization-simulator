@@ -1,8 +1,9 @@
 import global_vars
 from components.sampling.threshold_index_finder import ThresholdIndexFinder
+from stages.stage import Stage
 
 
-class ThresholdCaptureTrigger(Component):
+class ThresholdCaptureTrigger(Stage):
     '''
     captures a certain segment of the signal based on the specified threshold.
     Note that this appears after signal quantization (so signal range is between

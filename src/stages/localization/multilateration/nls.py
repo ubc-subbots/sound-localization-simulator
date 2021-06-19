@@ -5,8 +5,13 @@ problem.
 @author Dvir Hilu
 @date Oct 21, 2020
 '''
+<<<<<<< HEAD:src/stages/localization/multilateration/nls.py
 
 from stages.localization import localization_utils
+=======
+from components import component
+from components.position_calc import position_calc_utils
+>>>>>>> made a separate stage parent object. Also fixed omports:src/components/position_calc/nls_position_calc.py
 import numpy as np
 import global_vars
 from sim_utils.common_types import *

@@ -1,8 +1,8 @@
 import global_vars
 import numpy as np
+from stages.stage import Stage
 
-
-class GaussianNoise(Component):
+class GaussianNoise(Stage):
     '''
     adds gaussian noise at the configured mean and standard deviation
     '''

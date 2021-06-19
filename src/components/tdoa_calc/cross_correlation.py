@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+from components.component import Component
 from scipy.signal import correlate
 import numpy as np
 import global_vars

@@ -1,9 +1,10 @@
 from sim_utils.input_generation import InputGeneration
+from stages.stage import Stage
 import global_vars
 import numpy as np
 
 
-class InputGenerationStage:
+class InputGenerationStage(Stage):
     
     def __init__(self, measurement_period, duty_cycle):
         super().__init__()

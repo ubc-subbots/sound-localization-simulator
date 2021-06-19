@@ -1,5 +1,6 @@
 import numpy as np
 import global_vars
+from components.component import Component
 
 class PhaseAnalysis(Component):
     

@@ -6,6 +6,7 @@ Contains a variety of helper functions to be used across all position calculatio
 '''
 import numpy as np
 from scipy import optimize
+from components.component import Component
 #from simulator_main import sim_config as global_vars
 import global_vars
 from sim_utils.common_types import *
