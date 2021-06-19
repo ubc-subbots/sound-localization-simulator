@@ -6,6 +6,7 @@ import numpy as np
 class InputGenerationStage:
     
     def __init__(self, measurement_period, duty_cycle):
+        super().__init__()
         # as many channels as there are hydrophones
         self.num_components = len(global_vars.hydrophone_positions)
 
@@ -19,10 +20,8 @@ class InputGenerationStage:
             )
 
     def apply(self, sim_signal):
-        return tuple(
+        self.signal = tuple(
             component.apply(sim_signal)
             for component in self.components
         )
-
-    def write_frame(self, frame):
-        pass
+        return self.signal

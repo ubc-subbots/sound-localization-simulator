@@ -19,7 +19,7 @@ from experiment import Experiment
 
 class DefaultExp(Experiment):
     results = None
-    frames = None
+    frame = None
 
     # Create simulation chain
     def __init__(self):
@@ -76,7 +76,7 @@ class DefaultExp(Experiment):
         self.results = []
         for i in range(global_vars.num_iterations):
             self.results.append(self.simulation_chain.apply())
-            self.frames = self.simulation_chain.frames
+            self.frame = self.simulation_chain.frame
 
         return self.results
 
@@ -91,4 +91,5 @@ class DefaultExp(Experiment):
 if __name__ == '__main__':
     experiment = default_exp()
     exp_results = experiment.apply()
+    print(frame)
     experiment.display_results()

@@ -8,8 +8,9 @@ from sim_utils.output_utils import initialize_logger
 # create logger object for this module
 logger = initialize_logger(__name__)
 
-class CrossCorrelation:
+class CrossCorrelation(Component):
     def __init__(self, identifier):
+        super().__init__()
         self.identifier = identifier
 
     def apply(self, sim_signal):
@@ -34,10 +35,8 @@ class CrossCorrelation:
 
         maxima_idx = np.argmax(roi) - halfrange
 
-        return maxima_idx / global_vars.sampling_frequency
-
-    def write_frame(self, frame):
-        return {}
+        self.signal =  maxima_idx / global_vars.sampling_frequency
+        return self.signal
 
     def plot_cross_correlation(self, cross_correlation, center_idx, halfrange, roi):
         N = len(cross_correlation)

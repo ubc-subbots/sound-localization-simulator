@@ -2,7 +2,7 @@ import global_vars
 from components.sampling.threshold_index_finder import ThresholdIndexFinder
 
 
-class ThresholdCaptureTrigger:
+class ThresholdCaptureTrigger(Component):
     '''
     captures a certain segment of the signal based on the specified threshold.
     Note that this appears after signal quantization (so signal range is between
@@ -12,6 +12,7 @@ class ThresholdCaptureTrigger:
     '''
 
     def __init__(self, num_samples, threshold):
+        super().__init__()
         self.num_samples = num_samples
         self.threshold = num_samples
 
@@ -36,10 +37,9 @@ class ThresholdCaptureTrigger:
         trigger_index = min(trigger_indices)
 
         # capture a window after the trigger as the analyzed signal
-        return tuple(
+        self.signal = tuple(
             signal[trigger_index:(trigger_index + self.num_samples)]
             for signal in sim_signal
         )
 
-    def write_frame(self, frame):
-        pass
+        return self.signal

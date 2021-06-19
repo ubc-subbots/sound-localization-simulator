@@ -5,12 +5,13 @@ from sim_utils.output_utils import initialize_logger
 import logging
 from sim_utils.plt_utils import plot_signals
 
-class IdealADCStage:
+class IdealADCStage(Component):
     '''
     stage to simulate an ADC for every hydrophone signal channel
     '''
 
     def __init__(self, num_bits, quantization_method):
+        super().__init__()
         # create logger object for this module
         self.logger = initialize_logger(__name__)
         self.num_bits = num_bits
@@ -31,10 +32,9 @@ class IdealADCStage:
         if level <= logging.DEBUG:
             plot_signals(*sim_signal, title="Input to ADC")        
 
-        return tuple(
+        self.signal = tuple(
             np.array(component.apply(sig))
             for (component, sig) in zip(self.components, sim_signal)
         )
 
-    def write_frame(self, frame):
-        pass
+        return self.signal()

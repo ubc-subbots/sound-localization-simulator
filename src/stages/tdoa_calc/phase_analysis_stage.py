@@ -9,10 +9,10 @@ from sim_utils.output_utils import initialize_logger
 logger = initialize_logger(__name__)
 
 
-class PhaseAnalysisStage:
+class PhaseAnalysisStage(Component):
 
     def __init__(self):
-
+        super().__init__()
         # always using hydrophone 0 as reference
         self.num_components = len(global_vars.hydrophone_positions) - 1
 
@@ -34,12 +34,10 @@ class PhaseAnalysisStage:
             for i in range(self.num_components)
         ]
 
-        tdoa = tuple(
+        self.signal = tuple(
             component.apply(input_sig)
             for (component, input_sig) in zip(self.components, phase_analysis_inputs)
         )
 
-        return tdoa
+        return self.signal
 
-    def write_frame(self, frame):
-        pass

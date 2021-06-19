@@ -9,7 +9,7 @@ from sim_utils.output_utils import initialize_logger
 logger = initialize_logger(__name__)
 
 
-class CrossCorrelationStage:
+class CrossCorrelationStage(Component):
 
     def __init__(self):
 
@@ -35,12 +35,9 @@ class CrossCorrelationStage:
             for i in range(self.num_components)
         ]
 
-        tdoa =  tuple(
+        self.signal =  tuple(
             component.apply(input_sig)
             for (component, input_sig) in zip(self.components, phase_analysis_inputs)
         )
 
-        return tdoa
-
-    def write_frame(self, frame):
-        pass
+        return self.signal()

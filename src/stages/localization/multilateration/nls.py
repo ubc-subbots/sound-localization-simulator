@@ -12,7 +12,7 @@ import global_vars
 from sim_utils.common_types import *
 
 
-class NLSPositionCalc:
+class NLSPositionCalc(Component):
     '''
     NLS_position_calc is a class used to model the method of calculating the position of the pinger
     from hydrohpone Time Differece Of Arrival (TDOA) using a Non-linear Least Squares (NLS) solution
@@ -48,12 +48,14 @@ class NLSPositionCalc:
             The initial guess for the XY plane position of the pinger. The function expects an input of 
             type PolarPosition or Cartesian2DPosition, both defined in common_types.py
         '''
+        super().__init__()
         self.component_name = "NLSPositionCalc"
         self.id = "NLS"
         self.optimization_type = optimization_type
         self.guess_at_init = guess_at_init
         if guess_at_init:
             self.initial_guess = global_vars.initial_guess
+        self.signal = None
             
     def apply(self, sim_signal):
         '''
@@ -96,12 +98,11 @@ class NLSPositionCalc:
                              str(self.optimization_type))
 
         if self.is_polar:
-            return CylindricalPosition(pinger_pos[0], pinger_pos[1], global_vars.depth_sensor_reading())
+            self.signal = CylindricalPosition(pinger_pos[0], pinger_pos[1], global_vars.depth_sensor_reading())
         else:
-            return CartesianPosition(pinger_pos[0], pinger_pos[1], global_vars.depth_sensor_reading())
+            self.signal = CartesianPosition(pinger_pos[0], pinger_pos[1], global_vars.depth_sensor_reading())
 
-    def write_frame(self, frame):
-        return {}
+        return self.signal
 
 
 def get_squared_error_sum(pinger_pos, is_polar, *hydrophone_tdoas):

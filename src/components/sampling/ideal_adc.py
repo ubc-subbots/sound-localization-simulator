@@ -10,11 +10,13 @@ from sim_utils.common_types import *
 import global_vars
 
 
-class IdealADC:
+class IdealADC(Component):
 
     def __init__(self, num_bits, quantization_method):
+        super.__init__()
         self.num_bits = num_bits
         self.quantization_method = quantization_method
+        self.signal = None
 
     def apply(self, sim_signal):
         # downsamples signal from global_vars.continuous_sampling_frequency to global_vars.sampling_frequency
@@ -26,10 +28,8 @@ class IdealADC:
         # turn into signed integer representation
         quantized_signal -= 2**(self.num_bits-1)
         
+        self.signal = quantized_signal
         return quantized_signal
-
-    def write_frame(self, frame):
-        pass
 
 
 def downsample(signal, fs_old, fs_new):

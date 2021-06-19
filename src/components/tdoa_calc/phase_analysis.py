@@ -1,19 +1,18 @@
 import numpy as np
 import global_vars
 
-class PhaseAnalysis:
+class PhaseAnalysis(Component):
     
     def __init__(self, identifier):
+        super().__init__()
         self.identifier = identifier
 
     def apply(self, sim_signal):
         hydrophone0_phase = get_phase(sim_signal[0])
         hydrophone_phase = get_phase(sim_signal[1])
 
-        return (hydrophone0_phase - hydrophone_phase) / (2 * np.pi * global_vars.signal_frequency)
-
-    def write_frame(self, frame):
-        return {}
+        self.signal = (hydrophone0_phase - hydrophone_phase) / (2 * np.pi * global_vars.signal_frequency)
+        return self.signal
 
 
 # I can likely get this without a sampling frequency, but that is a todo:
