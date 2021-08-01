@@ -31,3 +31,8 @@ sampling_frequency = 20*signal_frequency
 continuous_sampling_frequency = 100*signal_frequency
 # TODO: double check pinger on-off frequency
 carrier_frequency = 1
+pinger_tx_pulse_len = 4e-3
+
+#### pinger intensity ####
+pinger_intensity = 177 # dB re 1uPa
+attenuation_coeff = 0.02 #TODO: add details in the description here
