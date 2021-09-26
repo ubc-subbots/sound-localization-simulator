@@ -7,7 +7,6 @@ class GaussianNoise(Stage):
     adds gaussian noise at the configured mean and standard deviation
     '''
     def __init__(self, mu, sigma):
-        super().__init__()
         self.mu = mu
         self.sigma = sigma
 

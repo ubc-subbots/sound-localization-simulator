@@ -13,7 +13,6 @@ logger = initialize_logger(__name__)
 class PhaseAnalysisStage(Stage):
 
     def __init__(self):
-        super().__init__()
         # always using hydrophone 0 as reference
         self.num_components = len(global_vars.hydrophone_positions) - 1
 

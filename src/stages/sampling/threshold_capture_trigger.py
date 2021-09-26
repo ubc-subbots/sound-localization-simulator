@@ -13,7 +13,6 @@ class ThresholdCaptureTrigger(Stage):
     '''
 
     def __init__(self, num_samples, threshold):
-        super().__init__()
         self.num_samples = num_samples
         self.threshold = num_samples
 

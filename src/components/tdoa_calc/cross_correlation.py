@@ -11,7 +11,6 @@ logger = initialize_logger(__name__)
 
 class CrossCorrelation(Component):
     def __init__(self, identifier):
-        super().__init__()
         self.identifier = identifier
 
     def apply(self, sim_signal):

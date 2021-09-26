@@ -13,7 +13,6 @@ class IdealADCStage(Stage):
     '''
 
     def __init__(self, num_bits, quantization_method):
-        super().__init__()
         # create logger object for this module
         self.logger = initialize_logger(__name__)
         self.num_bits = num_bits

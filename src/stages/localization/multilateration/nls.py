@@ -48,7 +48,6 @@ class NLSPositionCalc(Component):
             The initial guess for the XY plane position of the pinger. The function expects an input of 
             type PolarPosition or Cartesian2DPosition, both defined in common_types.py
         '''
-        super().__init__()
         self.component_name = "NLSPositionCalc"
         self.id = "NLS"
         self.optimization_type = optimization_type

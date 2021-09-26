@@ -5,7 +5,6 @@ from components.component import Component
 class PhaseAnalysis(Component):
     
     def __init__(self, identifier):
-        super().__init__()
         self.identifier = identifier
 
     def apply(self, sim_signal):

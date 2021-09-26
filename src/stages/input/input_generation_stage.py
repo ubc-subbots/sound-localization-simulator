@@ -7,7 +7,6 @@ import numpy as np
 class InputGenerationStage(Stage):
     
     def __init__(self, measurement_period, duty_cycle):
-        super().__init__()
         # as many channels as there are hydrophones
         self.num_components = len(global_vars.hydrophone_positions)
 
