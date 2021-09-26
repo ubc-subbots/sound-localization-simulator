@@ -41,4 +41,4 @@ class CrossCorrelationStage(Stage):
             for (component, input_sig) in zip(self.components, phase_analysis_inputs)
         )
 
-        return self.signal()
+        return self.signal

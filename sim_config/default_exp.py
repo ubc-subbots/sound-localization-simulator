@@ -2,6 +2,7 @@ from components.chain import Chain
 
 import numpy as np
 import jsonpickle
+import pprint
 import global_vars
 from sim_utils.common_types import QuantizationType, OptimizationType, PolarPosition, CylindricalPosition
 
@@ -91,5 +92,5 @@ class DefaultExp(Experiment):
 if __name__ == '__main__':
     experiment = default_exp()
     exp_results = experiment.apply()
-    print(frame)
+    pprint.pprint(experiment.frame, sort_dicts=False)
     experiment.display_results()

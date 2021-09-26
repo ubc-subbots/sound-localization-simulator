@@ -6,7 +6,7 @@ class Chain():
     def __init__(self, chain_start_data):
         self.chain = []
         self.chain_start_data = chain_start_data
-        self.frames = []
+        self.frame = {}
 
     def add_component(self, component):
         self.chain.append(component)
@@ -22,9 +22,7 @@ class Chain():
 
             # Instantiate the class (pass arguments to the constructor, if needed)
             result = component_instance.apply(curr_signal)
-            frame = component_instance.write_frame(None)
-
-            self.frames.append(frame)
+            component_instance.write_frame(self.frame)
 
             prev_signal = result
 

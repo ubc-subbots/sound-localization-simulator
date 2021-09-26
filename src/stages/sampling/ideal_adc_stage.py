@@ -39,4 +39,4 @@ class IdealADCStage(Stage):
             for (component, sig) in zip(self.components, sim_signal)
         )
 
-        return self.signal()
+        return self.signal

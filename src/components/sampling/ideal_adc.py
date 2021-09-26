@@ -14,11 +14,10 @@ import global_vars
 class IdealADC(Component):
 
     def __init__(self, num_bits, quantization_method):
-        super.__init__()
+        super().__init__()
         self.num_bits = num_bits
         self.quantization_method = quantization_method
-        self.signal = None
-
+        
     def apply(self, sim_signal):
         # downsamples signal from global_vars.continuous_sampling_frequency to global_vars.sampling_frequency
         sampled_signal = downsample(sim_signal, global_vars.continuous_sampling_frequency, global_vars.sampling_frequency)
