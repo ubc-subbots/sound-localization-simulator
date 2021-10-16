@@ -33,7 +33,7 @@ class NLSPositionCalc:
     https://github.com/ubc-subbots/sound-localization-simulator/blob/master/docs/Position_Calculation_Algorithms.pdf
     '''
 
-    def __init__(self, optimization_type, initial_guess):
+    def __init__(self, optimization_type, guess_at_init=True):
         '''
         @brief class constructor
 
@@ -51,17 +51,10 @@ class NLSPositionCalc:
         self.component_name = "NLSPositionCalc"
         self.id = "NLS"
         self.optimization_type = optimization_type
-        self.initial_guess = initial_guess
-
-        if type(initial_guess) == PolarPosition:
-            self.initial_guess = np.array([initial_guess.r, initial_guess.phi])
-            self.is_polar = True
-        elif type(initial_guess) == Cartesian2DPosition:
-            self.initial_guess = np.array([initial_guess.x, initial_guess.y])
-            self.is_polar = False
-        else:
-            raise ValueError("Initial Pinger Position should be either a PolarPosition or Cartesian2DPosition")
-
+        self.guess_at_init = guess_at_init
+        if guess_at_init:
+            self.initial_guess = global_vars.initial_guess
+            
     def apply(self, sim_signal):
         '''
         @brief Applies the simulation signal to the component and returns its outputs.
@@ -72,6 +65,18 @@ class NLSPositionCalc:
                             the TDOA between global_vars.hydrophone_positions[1] and global_vars.hydrophone_positions[0]
                             (specifically t1-t0)
         '''
+        if not self.guess_at_init:
+            self.initial_guess = global_vars.initial_guess
+
+        if type(self.initial_guess) == PolarPosition:
+            self.initial_guess = np.array([self.initial_guess.r, self.initial_guess.phi])
+            self.is_polar = True
+        elif type(self.initial_guess) == Cartesian2DPosition:
+            self.initial_guess = np.array([self,initial_guess.x, self.initial_guess.y])
+            self.is_polar = False
+        else:
+            raise ValueError("Initial Pinger Position should be either a PolarPosition or Cartesian2DPosition")
+
         # argument to the minimizer must be a numpy array
         pinger_pos = np.zeros(2)
         # non-minimized args are packaged in a single tuple

@@ -21,6 +21,7 @@ hydrophone_positions = [
     CylindricalPosition(1.85e-2, -np.pi/2, -1e-2),
 ]
 pinger_position = CylindricalPosition(15, 0, 5)
+initial_guess = PolarPosition(10, 0)
 
 #### frequency information ####
 signal_frequency = 40e3

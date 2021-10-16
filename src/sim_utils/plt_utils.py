@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import show
+import numpy as np
 from sim_utils.common_types import cyl_to_cart, polar_to_cart2d
 import global_vars
 
@@ -22,13 +23,13 @@ def plot_calculated_positions(position_list, initial_guess, sigma):
     h = ax1.hist2d(hx, hy, bins=40, range=[[-5e-2, 5e-2], [-5e-2, 5e-2]])
     ax1.set_xlabel("x (m)")
     ax1.set_ylabel("y (m)")
-    ax1.set_title("Hydrophone Distribution")
+    ax1.set_title("Hydrophone XY Distribution")
     f.colorbar(h[3], ax=ax1)
 
     h = ax2.hist2d(x, y, density=True, range=[[-50, 50], [-50, 50]], bins=40)
-    ax2.scatter(hx, hy, label="Hydrophone", c = 'white')
+    ax2.scatter(hx, hy, label="Hydrophones", c = 'white')
     ax2.scatter(px, py, label="Pinger", c='orange')
-    ax2.scatter(gx, gy, label="Position Guess", c = 'red')
+    ax2.scatter(gx, gy, label="Initial Guess", c = 'red')
     ax2.set_xlabel("x (m)")
     ax2.set_ylabel("y (m)")
     sigma_string = r'$\sigma = $' + str(round(sigma, 2))
@@ -44,3 +45,14 @@ def plot_signals(*signals, title="Hydrophone Signals"):
         i += 1
     plt.title(title)
     plt.legend()
+
+def plot_average_error_polar(results_dict, title="Multilateration Average Angular Error vs. Pinger Angle"):
+    average_errors = []
+    for angle in results_dict.keys():
+        error = [np.abs(angle - result) for result in results_dict[angle]]
+        average_errors.append(sum(error)/len(error))
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='polar')
+    ax.plot(results_dict.keys(), average_errors)
+    plt.title(title)
