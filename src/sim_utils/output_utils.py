@@ -46,8 +46,6 @@ def initialize_logger(logger_name):
         name = logger_name
         file_mode = 'a'
 
-    configure_logger(logging.NOTSET, 'default.log')
-
     # check if log directory exists. If not, create it
     if not os.path.exists('log'):
         os.makedirs('log')
