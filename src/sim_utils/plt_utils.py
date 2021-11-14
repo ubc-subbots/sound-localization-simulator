@@ -1,5 +1,4 @@
 import matplotlib.pyplot as plt
-from matplotlib.pyplot import show
 import numpy as np
 from sim_utils.common_types import cyl_to_cart, polar_to_cart2d
 import global_vars
@@ -46,13 +45,28 @@ def plot_signals(*signals, title="Hydrophone Signals"):
     plt.title(title)
     plt.legend()
 
-def plot_average_error_polar(results_dict, title="Multilateration Average Angular Error vs. Pinger Angle"):
+def plt_param_sweep_abs_avg_error(param_vals, actual_vals, sim_results, title, 
+                                  ispolar=False, scaley=1, scalex=1,
+                                  isangular_error=False):
     average_errors = []
-    for angle in results_dict.keys():
-        error = [np.abs(angle - result) for result in results_dict[angle]]
+    for actual, result in zip(actual_vals, sim_results):
+        if isangular_error:
+            # convert to range 0->2pi before finding the error
+            error = [
+                np.abs((actual)%(2*np.pi)-(calculated)%(2*np.pi)) 
+                for calculated in result
+            ]
+        else:
+            error = [np.abs(actual-calculated) for calculated in result]
         average_errors.append(sum(error)/len(error))
-
+    
+    param_vals = np.array(param_vals)
+    average_errors = np.array(average_errors)
     fig = plt.figure()
-    ax = fig.add_subplot(111, projection='polar')
-    ax.plot(results_dict.keys(), average_errors)
+    if ispolar:
+        ax = fig.add_subplot(111, projection='polar')
+    else:
+        ax = fig.add_subplot(111)
+    ax.plot(param_vals*scalex, average_errors*scaley)
     plt.title(title)
+    plt.show()

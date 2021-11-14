@@ -69,9 +69,14 @@ class MUSIC:
                 fig = plt.figure()
                 ax = fig.add_subplot(111, projection='polar')
                 ax.plot(phi_vals, j_music)
+                ax.scatter(global_vars.pinger_position.phi, max(j_music), 
+                    label="Actual DOA")
                 plt.xlabel("Polar Angle " + r'$\phi$' + " (degrees)")
                 plt.ylabel(r'$J_{MUSIC}$')
-                plt.title(r'$J_{MUSIC}$' + " Distribution in " + r'$\phi$')
+                plt.title(r'$J_{MUSIC}$' + " Distribution in " + r'$\phi$' + 
+                    "With DOA=%f" %(global_vars.pinger_position.phi/np.pi) + 
+                    r'$\pi$')
+                plt.legend()
                 plt.show()
 
             # Return the value of phi that maximizes J_MUSIC
