@@ -51,7 +51,7 @@ class MUSIC:
         w, v = eig(r_yy)
 
         # discard vector with largest eigenvalue
-        b_vectors = [v[i] for i in range(len(v)) if i != np.argmax(w)]
+        b_vectors = [v[:,i] for i in range(len(v)) if i != np.argmax(w)]
 
         # loop over parameters
         if self.use_depth_sensor:
@@ -66,8 +66,9 @@ class MUSIC:
             ]
 
             if self.visualize_jmusic:
-                plt.figure()
-                plt.plot(phi_vals*CONV_2_DEG, j_music)
+                fig = plt.figure()
+                ax = fig.add_subplot(111, projection='polar')
+                ax.plot(phi_vals, j_music)
                 plt.xlabel("Polar Angle " + r'$\phi$' + " (degrees)")
                 plt.ylabel(r'$J_{MUSIC}$')
                 plt.title(r'$J_{MUSIC}$' + " Distribution in " + r'$\phi$')
@@ -138,7 +139,7 @@ def generate_steering_vector(delay_func, phi, theta=None):
     tau_vals = [delay_func(hpos, phi, theta) for hpos in h_positions]
 
     # generate steering vector array from delay values
-    return np.array([np.e**(1j*omega*tau) for tau in tau_vals])
+    return np.array([np.e**(-1j*omega*tau) for tau in tau_vals])
 
 def calculate_music_coefficient(b_vectors, steering_vector):
     # vector inner products
