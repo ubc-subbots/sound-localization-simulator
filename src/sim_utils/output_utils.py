@@ -31,9 +31,9 @@ def create_output_file(frame_data, pickle_path, xml_path):
     outputFile.write(dom.toprettyxml())
 
 
-def configure_logger(log_lvl, cfg):
-    global log_level, config
-    config = cfg
+def configure_logger(log_lvl, fname):
+    global log_level, log_fname
+    log_fname = fname
     log_level = log_lvl
 
 
@@ -41,16 +41,17 @@ def initialize_logger(logger_name):
     # create new logfile when starting simulator main, append for other modules
     if logger_name == "__main__":
         file_mode = 'w'
-        name = "simulator_main"
+        name = "main"
     else:
         name = logger_name
         file_mode = 'a'
 
+    dir_path = os.path.dirname(os.path.realpath(__file__))
     # check if log directory exists. If not, create it
-    if not os.path.exists('log'):
-        os.makedirs('log')
+    if not os.path.exists(dir_path + '/../../log'):
+        os.makedirs(dir_path + '/../../log')
 
-    filename = "log/%s.log" % config # TODO: Create the folder if not exists
+    filename = dir_path + "/../../log/%s.log" % log_fname
     # create logger
     logger = logging.getLogger(name)
     logger.setLevel(log_level)

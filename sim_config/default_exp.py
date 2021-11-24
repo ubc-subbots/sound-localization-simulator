@@ -11,12 +11,13 @@ from stages.sampling.ideal_adc_stage import IdealADCStage
 from stages.sampling.threshold_capture_trigger import ThresholdCaptureTrigger
 from stages.tdoa.cross_correlation_stage import CrossCorrelationStage
 from components.position_calc.nls_position_calc import NLSPositionCalc
-import sim_utils.plt_utils as plt
+from sim_utils import plt_utils
+from matplotlib.pyplot import show
 from sim_utils.output_utils import initialize_logger
 
-from experiments.experiment import Experiment
+from experiment import Experiment
 
-class Experiment1(Experiment):
+class default_exp(Experiment):
     results = None
     frames = None
 
@@ -67,7 +68,7 @@ class Experiment1(Experiment):
 
         self.initial_guess = PolarPosition(10, np.pi)
         self.simulation_chain.add_component(
-            NLSPositionCalc(optimization_type=OptimizationType.nelder_mead, initial_guess=self.initial_guess)
+            NLSPositionCalc(optimization_type=OptimizationType.nelder_mead)
         )
 
     # Execute here
@@ -81,13 +82,13 @@ class Experiment1(Experiment):
 
     def display_results(self):
         if self.results:
-            plt.plot_calculated_positions(self.results, self.initial_guess, self.sigma)
-            plt.show()
+            plt_utils.plot_calculated_positions(self.results, self.initial_guess, self.sigma)
+            show()
         else:
             self.logger.warn("Run the experiment before displaying results.")
 
 
 if __name__ == '__main__':
-    experiment = Experiment1()
+    experiment = default_exp()
     exp_results = experiment.apply()
     experiment.display_results()
