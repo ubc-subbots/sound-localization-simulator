@@ -1,5 +1,5 @@
 import global_vars
-from components.tdoa.cross_correlation import CrossCorrelation
+from components.tdoa_calc.cross_correlation import CrossCorrelation
 import numpy as np
 import sim_utils.plt_utils as plt
 import logging

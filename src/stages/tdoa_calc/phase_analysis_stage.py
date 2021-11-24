@@ -1,5 +1,5 @@
 import global_vars
-from components.tdoa.phase_analysis import PhaseAnalysis
+from components.tdoa_calc.phase_analysis import PhaseAnalysis
 import numpy as np
 from sim_utils import plt_utils as plt
 import logging

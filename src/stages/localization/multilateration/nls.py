@@ -6,7 +6,7 @@ problem.
 @date Oct 21, 2020
 '''
 
-from components.position_calc import position_calc_utils
+from stages.localization import localization_utils
 import numpy as np
 import global_vars
 from sim_utils.common_types import *
@@ -83,10 +83,10 @@ class NLSPositionCalc:
         args = (self.is_polar, *sim_signal)
 
         if self.optimization_type == OptimizationType.nelder_mead:
-            pinger_pos = position_calc_utils.nelder_mead(get_squared_error_sum,
+            pinger_pos = localization_utils.nelder_mead(get_squared_error_sum,
                                                          self.initial_guess, args=args)
         elif self.optimization_type == OptimizationType.gradient_descent:
-            pinger_pos = position_calc_utils.gradient_descent(get_squared_error_sum,
+            pinger_pos = localization_utils.gradient_descent(get_squared_error_sum,
                                                               self.initial_guess, args=args)
         # elif (self.optimization_type == OptimizationType.newton_gausss):
         #     pinger_pos = position_calc_utils.newton_gauss(get_squared_error_sum, 
@@ -125,7 +125,7 @@ def get_squared_error_sum(pinger_pos, is_polar, *hydrophone_tdoas):
                                 with the given pinger position
     '''
     expected_delta_t_vals = [
-        position_calc_utils.tdoa_function_3D(pinger_pos, position, is_polar)
+        localization_utils.tdoa_function_3D(pinger_pos, position, is_polar)
         for position in global_vars.hydrophone_positions[1:]
     ]
 

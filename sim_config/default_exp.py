@@ -9,7 +9,7 @@ from stages.input.input_generation_stage import InputGenerationStage
 from stages.noise.gaussian_noise import GaussianNoise
 from stages.sampling.ideal_adc_stage import IdealADCStage
 from stages.sampling.threshold_capture_trigger import ThresholdCaptureTrigger
-from stages.tdoa_calc import CrossCorrelationStage
+from stages.tdoa_calc.cross_correlation_stage import CrossCorrelationStage
 from stages.localization.multilateration.nls import NLSPositionCalc
 from sim_utils import plt_utils
 from matplotlib.pyplot import show
