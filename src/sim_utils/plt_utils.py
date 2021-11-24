@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from matplotlib.pyplot import show
+import numpy as np
 from sim_utils.common_types import cyl_to_cart, polar_to_cart2d
 import global_vars
 
@@ -22,13 +22,13 @@ def plot_calculated_positions(position_list, initial_guess, sigma):
     h = ax1.hist2d(hx, hy, bins=40, range=[[-5e-2, 5e-2], [-5e-2, 5e-2]])
     ax1.set_xlabel("x (m)")
     ax1.set_ylabel("y (m)")
-    ax1.set_title("Hydrophone Distribution")
+    ax1.set_title("Hydrophone XY Distribution")
     f.colorbar(h[3], ax=ax1)
 
     h = ax2.hist2d(x, y, density=True, range=[[-50, 50], [-50, 50]], bins=40)
-    ax2.scatter(hx, hy, label="Hydrophone", c = 'white')
+    ax2.scatter(hx, hy, label="Hydrophones", c = 'white')
     ax2.scatter(px, py, label="Pinger", c='orange')
-    ax2.scatter(gx, gy, label="Position Guess", c = 'red')
+    ax2.scatter(gx, gy, label="Initial Guess", c = 'red')
     ax2.set_xlabel("x (m)")
     ax2.set_ylabel("y (m)")
     sigma_string = r'$\sigma = $' + str(round(sigma, 2))
@@ -44,3 +44,29 @@ def plot_signals(*signals, title="Hydrophone Signals"):
         i += 1
     plt.title(title)
     plt.legend()
+
+def plt_param_sweep_abs_avg_error(param_vals, actual_vals, sim_results, title, 
+                                  ispolar=False, scaley=1, scalex=1,
+                                  isangular_error=False):
+    average_errors = []
+    for actual, result in zip(actual_vals, sim_results):
+        if isangular_error:
+            # convert to range 0->2pi before finding the error
+            error = [
+                np.abs((actual)%(2*np.pi)-(calculated)%(2*np.pi)) 
+                for calculated in result
+            ]
+        else:
+            error = [np.abs(actual-calculated) for calculated in result]
+        average_errors.append(sum(error)/len(error))
+    
+    param_vals = np.array(param_vals)
+    average_errors = np.array(average_errors)
+    fig = plt.figure()
+    if ispolar:
+        ax = fig.add_subplot(111, projection='polar')
+    else:
+        ax = fig.add_subplot(111)
+    ax.plot(param_vals*scalex, average_errors*scaley)
+    plt.title(title)
+    plt.show()

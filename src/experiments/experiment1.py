@@ -3,7 +3,7 @@ from components.chain import Chain
 import numpy as np
 import jsonpickle
 import global_vars
-from sim_utils.common_types import QuantizationType, OptimizationType, PolarPosition
+from sim_utils.common_types import QuantizationType, OptimizationType, PolarPosition, CylindricalPosition
 
 from stages.input.input_generation_stage import InputGenerationStage
 from stages.noise.gaussian_noise import GaussianNoise
@@ -26,9 +26,15 @@ class Experiment1(Experiment):
         self.results = []  # Position list
 
         # Modify global constants
+        global_vars.hydrophone_positions = [
+            CylindricalPosition(0, 0, 0),
+            CylindricalPosition(1.85e-2, 0, 0),
+            CylindricalPosition(1.85e-2, np.pi, 0),
+            CylindricalPosition(1.2e-2, -np.pi/10, 1.2e-2),
+            CylindricalPosition(1.2e-2, -np.pi+np.pi/10, 1.2e-2),
+        ]
 
-        global_vars.speed_of_sound_mps = 2000
-
+        global_vars.pinger_position = CylindricalPosition(10, 0, 10)
         # create initial simulation signal
 
         sim_signal = None

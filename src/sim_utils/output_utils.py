@@ -11,7 +11,7 @@ import dicttoxml
 from xml.dom.minidom import parseString
 import pickle
 import logging
-import argparse
+import os
 
 # initialize to None to better detect errors
 log_level = None
@@ -46,7 +46,9 @@ def initialize_logger(logger_name):
         name = logger_name
         file_mode = 'a'
 
-    configure_logger(logging.NOTSET, 'default.log')
+    # check if log directory exists. If not, create it
+    if not os.path.exists('log'):
+        os.makedirs('log')
 
     filename = "log/%s.log" % config # TODO: Create the folder if not exists
     # create logger

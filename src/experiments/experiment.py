@@ -21,6 +21,7 @@ class Experiment:
         try:
             with open(f'{cls.__name__}.json', 'r') as f:
                 defrosted = jsonpickle.decode(f.read())  # type: Experiment
+                defrosted.__init__()
                 return defrosted
         except FileNotFoundError:
             return None
