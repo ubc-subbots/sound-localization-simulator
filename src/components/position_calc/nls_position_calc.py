@@ -72,7 +72,7 @@ class NLSPositionCalc:
             self.initial_guess = np.array([self.initial_guess.r, self.initial_guess.phi])
             self.is_polar = True
         elif type(self.initial_guess) == Cartesian2DPosition:
-            self.initial_guess = np.array([self,initial_guess.x, self.initial_guess.y])
+            self.initial_guess = np.array([self.initial_guess.x, self.initial_guess.y])
             self.is_polar = False
         else:
             raise ValueError("Initial Pinger Position should be either a PolarPosition or Cartesian2DPosition")

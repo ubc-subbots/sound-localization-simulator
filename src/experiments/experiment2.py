@@ -35,7 +35,7 @@ class Experiment2(Experiment):
             CartesianPosition(-2*array_spacing, 0, 0),
         ]
 
-        global_vars.sampling_frequency = 10*global_vars.signal_frequency
+        global_vars.sampling_frequency = 15*global_vars.signal_frequency
         global_vars.continuous_sampling_frequency = 100*global_vars.signal_frequency
 
         # create initial simulation signal\
@@ -65,13 +65,13 @@ class Experiment2(Experiment):
         )
 
         self.simulation_chain.add_component(
-            MUSIC(resolution=np.pi/50, visualize_jmusic=True)
+            MUSIC(resolution=np.pi/50, visualize_jmusic=False, halfplane=True)
         )
 
     # Execute here
     def apply(self):
-        resolution = np.pi/5
-        self.param_vals = np.arange(0, 2*np.pi, resolution)
+        resolution = np.pi/100
+        self.param_vals = np.arange(0, np.pi, resolution)
         self.actual = self.param_vals
         
         self.results = []

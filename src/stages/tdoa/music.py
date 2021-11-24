@@ -11,13 +11,15 @@ import matplotlib.pyplot as plt
 class MUSIC:
 
     def __init__(self, resolution, plane_wave_propagation = True, 
-                 use_depth_sensor=True, visualize_jmusic=False):
+                 use_depth_sensor=True, visualize_jmusic=False, 
+                 halfplane=True):
         # create logger object for this module
         self.logger = initialize_logger(__name__)
         
         self.plane_wave_propagation = plane_wave_propagation
         self.use_depth_sensor = use_depth_sensor
         self.visualize_jmusic = visualize_jmusic
+        self.halfplane = halfplane
         
         # error checking
         if resolution > 2*np.pi or resolution < 0:
@@ -55,7 +57,8 @@ class MUSIC:
 
         # loop over parameters
         if self.use_depth_sensor:
-            phi_vals = np.arange(start=0, stop=2*np.pi, step=self.resolution)
+            max_phi = np.pi if self.halfplane else 2*np.pi
+            phi_vals = np.arange(start=0, stop=max_phi, step=self.resolution)
             steering_vectors = [
                 generate_steering_vector(delay_func, phi)
                 for phi in phi_vals
