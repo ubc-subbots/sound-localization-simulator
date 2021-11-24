@@ -10,7 +10,6 @@ from importlib import import_module
 from sim_utils import output_utils
 import global_vars
 
-
 if __name__ == "__main__":
     ##################################################
     # Process Command Line Args

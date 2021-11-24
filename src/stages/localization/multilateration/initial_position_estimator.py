@@ -1,7 +1,7 @@
 from components import position_calc
-from components.position_calc.position_calc_utils import nelder_mead
+from stages.localization.localization_utils import nelder_mead
 import global_vars
-from components.position_calc.nls_position_calc import NLSPositionCalc
+from stages.localization.multilateration import NLSPositionCalc
 from sim_utils.common_types import PolarPosition, OptimizationType
 
 class InitialPositionEstimator:

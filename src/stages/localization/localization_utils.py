@@ -1,4 +1,4 @@
-'''@package position_calc_utils
+'''@package localization_utils
 Contains a variety of helper functions to be used across all position calculation components
 
 @author Dvir Hilu

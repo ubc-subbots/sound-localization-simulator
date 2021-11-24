@@ -7,7 +7,7 @@ output/
 # do not push vscode directory to repo
 .vscode/
 
-# do not push environment to repo, just requirements.txt
+# do not push environment to repo, just requirements.txt and bellhops dependency
 env/*
 !env/requirements.txt
 !env/bellhop.exe
