@@ -45,28 +45,46 @@ def plot_signals(*signals, title="Hydrophone Signals"):
     plt.title(title)
     plt.legend()
 
-def plt_param_sweep_abs_avg_error(param_vals, actual_vals, sim_results, title, 
-                                  ispolar=False, scaley=1, scalex=1,
-                                  isangular_error=False):
-    average_errors = []
-    for actual, result in zip(actual_vals, sim_results):
-        if isangular_error:
-            # convert to range 0->2pi before finding the error
-            error = [
-                np.abs((actual)%(2*np.pi)-(calculated)%(2*np.pi)) 
-                for calculated in result
-            ]
-        else:
-            error = [np.abs(actual-calculated) for calculated in result]
-        average_errors.append(sum(error)/len(error))
-    
+def plt_param_sweep_abs_avg_error(param_vals, actual_vals_dict,
+                                  sim_results_dict, title, ispolar=False, 
+                                  scaley=1, scalex=1, isangular_error=False):
+
+    error_dict = _get_error_dict(actual_vals_dict, sim_results_dict, 
+                                 isangular_error)
     param_vals = np.array(param_vals)
-    average_errors = np.array(average_errors)
+    
     fig = plt.figure()
     if ispolar:
         ax = fig.add_subplot(111, projection='polar')
     else:
         ax = fig.add_subplot(111)
-    ax.plot(param_vals*scalex, average_errors*scaley)
+    
+    for key, errors in error_dict.items():
+        ax.plot(param_vals*scalex, errors*scaley, label=key)
+    
     plt.title(title)
+    plt.legend()
     plt.show()
+
+def _get_error_dict(actual_vals_dict, sim_results_dict, isangular_error):
+    keys = actual_vals_dict.keys()
+    error_dict = {key:[] for key in keys}
+    
+    for key in keys:
+        actual_vals = actual_vals_dict[key]
+        sim_results = sim_results_dict[key]
+        
+        average_errors = []
+        for actual, result in zip(actual_vals, sim_results):
+            if isangular_error:
+                # convert to range 0->2pi before finding the error
+                error = [
+                    np.abs((actual)%(2*np.pi)-(calculated)%(2*np.pi)) 
+                    for calculated in result
+                ]
+            else:
+                error = [np.abs(actual-calculated) for calculated in result]
+            average_errors.append(sum(error)/len(error))
+        error_dict[key] = np.array(average_errors)
+
+    return error_dict

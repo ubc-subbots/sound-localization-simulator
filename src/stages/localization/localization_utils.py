@@ -174,3 +174,40 @@ def tdoa_function_3D(pinger_pos, hydrophone_pos, is_polar):
         delta_d = np.sqrt(delta_x**2 + delta_y**2 + delta_z**2)
 
     return (pinger_distance - delta_d)/global_vars.speed_of_sound
+
+def plane_wave_prop_delay(params, sensor_pos, use_depth_sensor=False):
+    # need to convert sensor position to cartesian
+    if (type(sensor_pos) == CylindricalPosition):
+        pos = np.array(cyl_to_cart(sensor_pos))
+    else:
+        pos = np.array(sensor_pos)
+    
+    # convert to numpy array for dot product
+    x = np.array(pos)
+
+    if use_depth_sensor:
+        # construct wave direction vector wit
+        r = params[0]
+        phi = params[1]
+        z = global_vars.pinger_position.z
+        norm_factor = np.sqrt(r**2 + z**2)
+
+        # negative signs indicate propagation is towards sensor
+        khat = -1/norm_factor * np.array([
+            r*np.cos(phi),
+            r*np.sin(phi),
+            z
+        ])
+    else:
+        # construct wave direction vector with spherical angles as params
+        theta = params[0]
+        phi = params[1]
+
+        # negative signs indicate propagation is towards sensor
+        khat = -np.array([
+            np.sin(theta)*np.cos(phi),
+            np.sin(theta)*np.sin(phi),
+            np.cos(theta)
+        ])
+        
+    return np.dot(khat, x)/global_vars.speed_of_sound
