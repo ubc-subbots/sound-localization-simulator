@@ -3,17 +3,17 @@ from components.chain import Chain
 import numpy as np
 import jsonpickle
 import global_vars
-from sim_utils.common_types import CONV_2_DEG, CartesianPosition, QuantizationType, OptimizationType, PolarPosition, CylindricalPosition
+from sim_utils.common_types import CONV_2_DEG, CartesianPosition, QuantizationType, CylindricalPosition
 
 from stages.input.input_generation_stage import InputGenerationStage
 from stages.noise.gaussian_noise import GaussianNoise
 from stages.sampling.ideal_adc_stage import IdealADCStage
 from stages.sampling.threshold_capture_trigger import ThresholdCaptureTrigger
-from stages.tdoa.music import MUSIC
+from stages.localization.subspace.music import MUSIC
 import sim_utils.plt_utils as plt
 from sim_utils.output_utils import initialize_logger
 
-from experiments.experiment import Experiment
+from experiment import Experiment
 
 class Experiment2(Experiment):
     results = None
