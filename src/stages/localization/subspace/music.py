@@ -1,7 +1,5 @@
-from sys import int_info
 import global_vars
 import numpy as np
-from numpy.linalg.linalg import matrix_rank
 from stages.localization.localization_utils import plane_wave_prop_delay
 from numpy.fft import fft
 from numpy.linalg import eig
@@ -21,14 +19,25 @@ class MUSIC:
         self.plane_wave_propagation = plane_wave_propagation
         # determine model for calculating delays
         if self.plane_wave_propagation:
+            self.logger.info("Using plane wave propagation to approximate TOA")
             self.delay_func = plane_wave_prop_delay
         else:
             self.logger.error("Only plane wave propagation modelled at the moment.")
         
         self.use_depth_sensor = use_depth_sensor
+        if use_depth_sensor:
+            self.logger.info("Initializing MUSIC localization stage with r, phi as parameters")
+        else:
+            self.logger.info("Initializing MUSIC localization stage with theta, phi as parameters")
+        
         self.visualize_jmusic = visualize_jmusic
+        if visualize_jmusic:
+            self.logger.warn("Setting visualization setting on MUSIC localization stage will lead to hella plots")
 
         # set search range
+        if xy_halfplane:
+            self.logger.warn("Constraining the localization to the +y halfplane."
+                             " Not able to detect reflective degeneracy!")
         self.max_phi = np.pi if xy_halfplane else 2*np.pi
         self.r_max = r_max
         self.num_r_cells = num_r_cells
@@ -53,7 +62,7 @@ class MUSIC:
 
     def apply(self, sim_signal):
         level = self.logger.getEffectiveLevel()
-        if level <= logging.DEBUG:
+        if level <= logging.NOTSET:
             plot_signals(*sim_signal, title="Input to ADC")        
 
         # take FFT of each signal
@@ -62,7 +71,7 @@ class MUSIC:
         ])
 
         # get autocorrelation matrix of frequency domain vector
-        r_yy = get_autocorrelation_matrix(y_fft, is_fft=True)
+        r_yy = self.get_autocorrelation_matrix(y_fft, is_fft=True)
 
         # eigen analysis on r_yy
         w, v = eig(r_yy)
@@ -98,6 +107,7 @@ class MUSIC:
 
                 # evaluate whether the maximizing parameters should change
                 if j_music > max_j_music:
+                    self.logger.debug("Updating max JMUSIC to %.2f with params=(%.2f,%.2f)"%(j_music, p1, p2))
                     max_j_music = j_music
                     max_params = (p1, p2)
 
@@ -130,32 +140,50 @@ class MUSIC:
             plt.show()
 
         # Return the parameter values that maximizes J_MUSIC
+        self.logger.info("JMUSIC maximized at a value of %.2f with params=(%.2f, %.2f)"
+                         %(max_j_music, max_params[0], max_params[1]))
+        
         return max_params
     
     def write_frame(self, frame):
         pass
 
-def get_autocorrelation_matrix(sig_array, is_fft=True):
-        # convert to numpy array
-        y = np.array(sig_array)
-        rows = y.shape[0]
-        
-        # loop through signal array and perform the matrix multiplication
-        # and expectation opertaion for the autocorrelation of the vector
-        # contatining all hydrophone signals.
-        # initialize array of complex numbers to avoid casting
-        r_yy = np.ones((rows, rows))*(1+1j)
-        for i in range(rows):
-            for j in range(rows):
-                y_cross = y[i]*np.conj(y[j])
-                if is_fft:
-                    index = int(len(y_cross) * 
-                            global_vars.signal_frequency/global_vars.sampling_frequency)
-                    r_yy[i,j] = y_cross[index]
-                else:
-                    r_yy[i,j] = np.mean(y_cross)
+    def get_autocorrelation_matrix(self, sig_array, is_fft=True):
+            # convert to numpy array
+            y = np.array(sig_array)
+            rows = y.shape[0]
+            
+            # loop through signal array and perform the matrix multiplication
+            # and expectation opertaion for the autocorrelation of the vector
+            # contatining all hydrophone signals.
+            # initialize array of complex numbers to avoid casting
+            r_yy = np.ones((rows, rows))*(1+1j)
+            for i in range(rows):
+                for j in range(rows):
+                    y_cross = y[i]*np.conj(y[j])
+                    if is_fft:
+                        #TODO: figure this out!!!!
+                        max_index = np.argmax(np.abs(y_cross))
+                        expected_index = int(len(y_cross) 
+                                         * global_vars.signal_frequency
+                                         / global_vars.sampling_frequency)
+                        
+                        if max_index != expected_index:
+                            frequency = (max_index
+                                         * global_vars.sampling_frequency
+                                         / len(y_cross))
+                            exp_frequency = (expected_index
+                                             * global_vars.sampling_frequency
+                                             / len(y_cross))
+                            self.logger.warn("At correlation matrix indices [%d, %d]"
+                                             "Expected frequency %.2f but got frequency %.2f"
+                                             %(i, j, exp_frequency, frequency))
 
-        return r_yy
+                        r_yy[i,j] = y_cross[max_index]
+                    else:
+                        r_yy[i,j] = np.mean(y_cross)
+
+            return r_yy
 
 def generate_steering_vector(delay_func, params, use_depth_sensor):
     omega = 2*np.pi*global_vars.signal_frequency
