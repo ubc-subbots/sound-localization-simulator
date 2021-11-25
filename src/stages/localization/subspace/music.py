@@ -1,5 +1,6 @@
 import global_vars
 import numpy as np
+from sim_utils.common_types import CONV_2_DEG
 from stages.localization.localization_utils import plane_wave_prop_delay
 from numpy.fft import fft
 from numpy.linalg import eig
@@ -32,6 +33,7 @@ class MUSIC:
         
         self.visualize_jmusic = visualize_jmusic
         if visualize_jmusic:
+            plt.rcParams.update({'font.size': 8})
             self.logger.warn("Setting visualization setting on MUSIC localization stage will lead to hella plots")
 
         # set search range
@@ -80,11 +82,11 @@ class MUSIC:
         b_vectors = [v[:,i] for i in range(len(v)) if i != np.argmax(w)]
 
         # generate parameter values to iterate over
-        param2_vals = np.arange(0, self.max_phi, self.resolution)
+        param2_vals = np.arange(0, self.max_phi+self.resolution, self.resolution)
         if self.use_depth_sensor:
             param1_vals = np.linspace(1, self.r_max, self.num_r_cells)
         else:
-            param1_vals = np.arange(0, np.pi/2, self.resolution)
+            param1_vals = np.arange(0, np.pi/2+self.resolution, self.resolution)
             # shift to lower hemisphere if we are above pinger
             if global_vars.pinger_position.z < 0:
                 param1_vals += np.pi/2
@@ -114,16 +116,20 @@ class MUSIC:
             # add sub dictionary to main dictionary    
             j_music_dict[p1] = j_music_sub_dict
 
-        if self.visualize_jmusic:
-            num_plots = 6
-            vis_indices = (np.linspace(0,1,num_plots)*len(param1_vals)).astype(int)
+        # compare error to figure out if to visualize
+        error = np.abs(global_vars.pinger_position.phi - max_params[1])*CONV_2_DEG
+
+        if self.visualize_jmusic and error > 10:
+            num_plots = 8
+            vis_indices = (np.linspace(0,1,num_plots)*(len(param1_vals)-1)).astype(int)
             vis_p1_vals = param1_vals[vis_indices]
             p1_name = "r" if self.use_depth_sensor else r'$\theta$'
 
             num_fig_rows = int(np.sqrt(num_plots))
             num_fig_cols = int(np.ceil(num_plots/num_fig_rows))
             fig, axs = plt.subplots(num_fig_rows, num_fig_cols, 
-                                    projection='polar', figsize=(10,10))
+                                    figsize=(12,12), 
+                                    subplot_kw={'projection': 'polar'})
             fig.suptitle(r'$J_{MUSIC}$'+ " Coefficient Visualization")
             axs = axs.flatten()
             
@@ -163,23 +169,23 @@ class MUSIC:
                     y_cross = y[i]*np.conj(y[j])
                     if is_fft:
                         #TODO: figure this out!!!!
-                        max_index = np.argmax(np.abs(y_cross))
+                        # max_index = np.argmax(np.abs(y_cross))
                         expected_index = int(len(y_cross) 
                                          * global_vars.signal_frequency
                                          / global_vars.sampling_frequency)
                         
-                        if max_index != expected_index:
-                            frequency = (max_index
-                                         * global_vars.sampling_frequency
-                                         / len(y_cross))
-                            exp_frequency = (expected_index
-                                             * global_vars.sampling_frequency
-                                             / len(y_cross))
-                            self.logger.warn("At correlation matrix indices [%d, %d]"
-                                             "Expected frequency %.2f but got frequency %.2f"
-                                             %(i, j, exp_frequency, frequency))
+                        # if max_index != expected_index:
+                        #     frequency = (max_index
+                        #                  * global_vars.sampling_frequency
+                        #                  / len(y_cross))
+                        #     exp_frequency = (expected_index
+                        #                      * global_vars.sampling_frequency
+                        #                      / len(y_cross))
+                        #     self.logger.warn("At correlation matrix indices [%d, %d]"
+                        #                      "Expected frequency %.2f but got frequency %.2f"
+                        #                      %(i, j, exp_frequency, frequency))
 
-                        r_yy[i,j] = y_cross[max_index]
+                        r_yy[i,j] = y_cross[expected_index]
                     else:
                         r_yy[i,j] = np.mean(y_cross)
 
