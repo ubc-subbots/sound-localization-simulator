@@ -34,7 +34,7 @@ class music_experiment(Experiment):
             CartesianPosition(array_spacing, 0, array_spacing),
             CartesianPosition(-array_spacing, 0, array_spacing),
         ]
-        global_vars.pinger_position = CylindricalPosition(10, 0, 0)
+        global_vars.pinger_position = CylindricalPosition(10, 0, 5)
 
         global_vars.sampling_frequency = 15*global_vars.signal_frequency
         global_vars.continuous_sampling_frequency = 100*global_vars.signal_frequency
@@ -45,10 +45,10 @@ class music_experiment(Experiment):
         self.simulation_chain = Chain(sim_signal)
 
         self.simulation_chain.add_component(
-            InputGenerationStage(measurement_period=10e-3, duty_cycle=4e-3)
+            InputGenerationStage(measurement_period=20e-3, duty_cycle=4e-3)
         )
 
-        self.sigma = 0.01
+        self.sigma = 0.05
         self.simulation_chain.add_component(
             GaussianNoise(mu=0, sigma=self.sigma)
         )
@@ -60,13 +60,13 @@ class music_experiment(Experiment):
 
         num_samples = int(
             10 * (global_vars.sampling_frequency / global_vars.signal_frequency))  # sample 10 cycles of the wave
-        threshold = 0.05 * (2 ** (num_bits-1))
+        threshold = 0.5 * (2 ** (num_bits-1))
         self.simulation_chain.add_component(
             ThresholdCaptureTrigger(num_samples=num_samples, threshold=threshold)
         )
 
         self.simulation_chain.add_component(
-            MUSIC(resolution=np.pi/50, visualize_jmusic=False, xy_halfplane=True)
+            MUSIC(resolution=np.pi/50, visualize_jmusic=True, xy_halfplane=True)
         )
 
     # Execute here
@@ -93,7 +93,7 @@ class music_experiment(Experiment):
         for phi in self.param_vals:
             computed_theta = []
             computed_phi = []
-            global_vars.pinger_position = CylindricalPosition(10, phi, 0)
+            global_vars.pinger_position = CylindricalPosition(10, phi, 5)
             self.logger.info("Running simulation with pinger DOA at %.2f"%(phi*CONV_2_DEG))
             for i in range(global_vars.num_iterations):
                 result = self.simulation_chain.apply()

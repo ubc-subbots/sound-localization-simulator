@@ -64,8 +64,8 @@ class MUSIC:
 
     def apply(self, sim_signal):
         level = self.logger.getEffectiveLevel()
-        if level <= logging.NOTSET:
-            plot_signals(*sim_signal, title="Input to ADC")        
+        if level <= logging.DEBUG:
+            plot_signals(*sim_signal, title="Input to MUSIC Localization Algorithm")        
 
         # take FFT of each signal
         y_fft = np.array([
@@ -120,6 +120,8 @@ class MUSIC:
         error = np.abs(global_vars.pinger_position.phi - max_params[1])*CONV_2_DEG
 
         if self.visualize_jmusic and error > 10:
+            plot_signals(*sim_signal, "Input to MUSIC localization algorithm")
+
             num_plots = 8
             vis_indices = (np.linspace(0,1,num_plots)*(len(param1_vals)-1)).astype(int)
             vis_p1_vals = param1_vals[vis_indices]
@@ -199,7 +201,7 @@ def generate_steering_vector(delay_func, params, use_depth_sensor):
         delay_func(params, hpos, use_depth_sensor) 
         for hpos in global_vars.hydrophone_positions
     ])
-
+    
     # generate steering vector array from delay values
     return np.e**(-1j*omega*tau)
 
