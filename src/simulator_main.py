@@ -63,9 +63,9 @@ if __name__ == "__main__":
     Experiment_class = getattr(experiment_module, f'Experiment{str(args.experiment)}')
 
     # Instantiate the class. Try loading from a previous run.
-    experiment = Experiment_class.load()  # type: Experiment
-    if experiment is None:
-        experiment = Experiment_class()
+    # experiment = Experiment_class.load()  # type: Experiment
+    # if experiment is None:
+    experiment = Experiment_class()
 
     # Run
     results = experiment.apply()

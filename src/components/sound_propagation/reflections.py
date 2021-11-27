@@ -11,13 +11,18 @@ import global_vars
 import arlpy.uwapm as pm
 import arlpy
 import arlpy.plot as plt
+import matplotlib.pyplot as pyplot
 import math
+from datetime import date, datetime
+from sim_utils.output_utils import initialize_logger
 
+# create logger object for this module
+logger = initialize_logger(__name__)
 
-class reflections:
+class Reflections:
 
     def __init__(self, bottom_density, bottom_soundspeed, pool_depth, rx_depth, rx_range, tx_depth,
-                surface= None, bottom_absorption= 0, bottom_roughness= 0, frequency= global_vars.signal_frequency, max_angle= 80, min_angle= -80, nbeams= 0, randomize_FFVS= 0):
+                surface= None, bottom_absorption= 0, bottom_roughness= 0, max_angle= 80, min_angle= -80, nbeams= 0, randomize_FFVS= 0):
         """
         :param float bottom_density: if density is varying, need to specify a density profile
         :param float bottom_soundspeed: if soundspeed is varying, need to specify a sound speed profile
@@ -28,7 +33,6 @@ class reflections:
         :param ndarray_or_None surface: if not specified, the top surface will just be a straight line
         :param float bottom_absorption: set to 0 for max reflections
         :param float bottom_roughness: set to 0 for max reflections
-        :param float frequency:
         :param float max_angle: maximum detection angle for the receiver
         :param float min_angle: minimum detection angle for the receiver
         :param int nbeams: number of beams(?) this parameter doesn't affect the output for some reason
@@ -43,29 +47,49 @@ class reflections:
         self.surface = surface
         self.bottom_absorption = bottom_absorption
         self.bottom_roughness = bottom_roughness
-        self.frequency = frequency
         self.max_angle = max_angle
         self.min_angle = min_angle
         self.nbeams = nbeams
         self.randomize_FFVS = randomize_FFVS
 
-
     def apply(self, sim_signal):
-        # sim_signal - should i make this the voltage level of the pinger output? 
+
+        time_obj = datetime.now()
+        start_time = time_obj.microsecond
+        # sim_signal = technically the pinger signal, but since this is the first component in the chain, not necessary
+        # pinger signal magnitude defined in global_vars
+        #TODO: if possible, get measurements with a physical pinger
         
         # initialize BELLHOP environmnet with inputs
         env = initialize_bellhop(self.bottom_density, self.bottom_soundspeed, self.pool_depth, self.rx_depth, self.rx_range, global_vars.speed_of_sound, self.surface, 
-                self.tx_depth, self.bottom_absorption, self.bottom_roughness, self.frequency, self.max_angle, self.min_angle, self.nbeams)
+                self.tx_depth, self.bottom_absorption, self.bottom_roughness, global_vars.signal_frequency, self.max_angle, self.min_angle, self.nbeams)
         
         # get time of arrivals from various reflections
         arrivals = pm.compute_arrivals(env)
-        toa = arrivals['time_of_arrival'].array
+        #pm.plot_arrivals(arrivals, width=900)
+        impulse_resp =  pm.arrivals_to_impulse_response(arrivals, fs=global_vars.continuous_sampling_frequency,
+                        abs_time = True)
+        #pyplot.figure()
+        #pyplot.plot(np.abs(impulse_resp))
+        #pyplot.title("impulse response")
 
         # convolution of the impulse response from the reflection simulation (bellhop) and the pinger pressure wave
-        superposition = convolution(toa)
+        superposition = convolution(np.abs(impulse_resp))
+        #pyplot.figure()
+        #pyplot.plot(superposition[0:len(impulse_resp)])
+        #pyplot.title("convolution")
+        #pyplot.show()
 
         # get the FFVS from hydrophone datasheet and calculate the hydrophone voltage response
-        return hydrophone_response(free_field_voltave_sensitivity(global_vars.signal_frequency, self.randomize_FFVS), superposition)
+        FFVS = free_field_voltave_sensitivity(global_vars.signal_frequency, self.randomize_FFVS)
+        hydrophone_response_output = hydrophone_response(FFVS, superposition)
+  
+        # report total sim time
+        time_obj = datetime.now()
+        sim_time = time_obj.microsecond - start_time
+        logger.info("Simulation Time was", sim_time, "microseconds")
+
+        return hydrophone_response_output
 
     def write_frame(self, frame):
         pass
@@ -93,25 +117,20 @@ def initialize_bellhop(bottom_density, bottom_soundspeed, pool_depth, rx_depth, 
     #pm.print_env(env)
     return env
 
-def convolution(toa):
-    n_points = global_vars.pinger_tx_pulse_len*global_vars.continuous_sampling_frequency + 1
+def convolution(impulse_response):
     dt = 1/global_vars.continuous_sampling_frequency
-    impulse_response = np.zeros(n_points)
-
-    #TODO: leave for now but log how long the simulation took - ask dvir
-    for i in range(len(toa)):
-        impulse_response[math.floor(toa[i]/dt)] = toa[i]
+    n_points = 0.004/dt # pinger lasts 4ms TODO: double check this from pinger datasheet
     
-    #TODO: figure out attenuation coefficient for underwater acoustics
-    #TODO: find a range of values and will change them during simulation
+    #TODO: add more details for attenuation coefficient for underwater acoustics (in global_vars)
+    # find a range of values and will change them during simulation
     I_1m = 10**(global_vars.pinger_intensity/20)*1 # units in uPa
     I_0m = I_1m/math.exp(-global_vars.attenuation_coeff)
 
-    pressure_wave = np.zeros(n_points) # pressure wave output from the pinger
+    pressure_wave = np.zeros(int(n_points)) # pressure wave output from the pinger
     for i in range(len(pressure_wave)):
         pressure_wave[i] =I_0m* math.sin(2*math.pi*global_vars.signal_frequency*(dt*i))
 
-    return np.convolve(impulse_response,pressure_wave)
+    return np.convolve(pressure_wave, impulse_response)
 
 def free_field_voltave_sensitivity(frequency, randomize_FFVS):
     FFVS = None
