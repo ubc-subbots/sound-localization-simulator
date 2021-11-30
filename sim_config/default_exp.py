@@ -17,7 +17,7 @@ from sim_utils.output_utils import initialize_logger
 
 from experiment import Experiment
 
-class default_exp(Experiment):
+class DefaultExp(Experiment):
     results = None
     frames = None
 

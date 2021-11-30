@@ -1,4 +1,5 @@
 from sim_utils.common_types import *
+from numpy.random import rand
 
 ##############################################
 # Procedural Parameters
@@ -36,3 +37,8 @@ pinger_tx_pulse_len = 4e-3
 #### pinger intensity ####
 pinger_intensity = 177 # dB re 1uPa @1m
 attenuation_coeff = 0.02 #TODO: add details in the description here
+
+#### Depth Sensor ####
+depth_sensor_uncertainty = 2e-3 # m
+def depth_sensor_reading():
+    return pinger_position.z + depth_sensor_uncertainty*rand()

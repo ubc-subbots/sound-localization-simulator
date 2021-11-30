@@ -4,13 +4,13 @@ import numpy as np
 #import jsonpickle
 import global_vars
 
-from stages.reflection.hydrophone_response_stage import Hydrophone_Response_Stage
+from stages.reflection.hydrophone_response_stage import HydrophoneResponseStage
 import sim_utils.plt_utils as plt
 from sim_utils.output_utils import initialize_logger
 
 from experiment import Experiment
 
-class Experiment2(Experiment):
+class BellhopInitExample(Experiment):
     results = None
     frames = None
 
@@ -46,7 +46,7 @@ class Experiment2(Experiment):
         tx_depth = 5 # depth of pinger
 
         self.simulation_chain.add_component(
-            Hydrophone_Response_Stage(bottom_density, bottom_soundspeed, pool_depth, tx_depth, surface=None)
+            HydrophoneResponseStage(bottom_density, bottom_soundspeed, pool_depth, tx_depth, surface=None)
         )
 
     # Execute here

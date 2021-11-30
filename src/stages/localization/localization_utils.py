@@ -157,19 +157,19 @@ def tdoa_function_3D(pinger_pos, hydrophone_pos, is_polar):
     '''
     # in this case, pinger_pos[0] is r and pinger_pos[1] is phi
     if (is_polar):    
-        pinger_distance = np.sqrt(pinger_pos[0]**2 + global_vars.pinger_position.z**2)
-        delta_z = global_vars.pinger_position.z - hydrophone_pos.z
+        pinger_distance = np.sqrt(pinger_pos[0]**2 + global_vars.depth_sensor_reading()**2)
+        delta_z = global_vars.depth_sensor_reading() - hydrophone_pos.z
         delta_phi = pinger_pos[1] - hydrophone_pos.phi
         
         delta_d = np.sqrt(pinger_pos[0]**2 + hydrophone_pos.r**2 + delta_z**2
                     - 2*pinger_pos[0]*hydrophone_pos.r*np.cos(delta_phi))
     # in this case, pinger_pos[0] is x and pinger_pos[1] is y
     else:
-        pinger_distance = np.sqrt(pinger_pos[0]**2 + pinger_pos[1]**2 + global_vars.pinger_position.z**2)
+        pinger_distance = np.sqrt(pinger_pos[0]**2 + pinger_pos[1]**2 + global_vars.depth_sensor_reading()**2)
         hydrophone_pos_cart = cyl_to_cart(hydrophone_pos)
         delta_x = pinger_pos[0] - hydrophone_pos_cart.x
         delta_y = pinger_pos[1] - hydrophone_pos_cart.y
-        delta_z = global_vars.pinger_position.z - hydrophone_pos.z
+        delta_z = global_vars.depth_sensor_reading() - hydrophone_pos.z
         
         delta_d = np.sqrt(delta_x**2 + delta_y**2 + delta_z**2)
 
@@ -189,7 +189,7 @@ def plane_wave_prop_delay(params, sensor_pos, use_depth_sensor=False):
         # construct wave direction vector wit
         r = params[0]
         phi = params[1]
-        z = global_vars.pinger_position.z
+        z = global_vars.depth_sensor_reading()
         norm_factor = np.sqrt(r**2 + z**2)
 
         # negative signs indicate propagation is towards sensor

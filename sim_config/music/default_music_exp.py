@@ -15,7 +15,7 @@ from sim_utils.output_utils import initialize_logger
 
 from experiment import Experiment
 
-class music_experiment(Experiment):
+class DefaultMusicExp(Experiment):
     results = None
     frames = None
 
