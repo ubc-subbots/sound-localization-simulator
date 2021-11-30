@@ -34,5 +34,5 @@ carrier_frequency = 1
 pinger_tx_pulse_len = 4e-3
 
 #### pinger intensity ####
-pinger_intensity = 177 # dB re 1uPa
+pinger_intensity = 177 # dB re 1uPa @1m
 attenuation_coeff = 0.02 #TODO: add details in the description here
