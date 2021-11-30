@@ -96,9 +96,9 @@ class NLSPositionCalc:
                              str(self.optimization_type))
 
         if self.is_polar:
-            return CylindricalPosition(pinger_pos[0], pinger_pos[1], global_vars.pinger_position.z)
+            return CylindricalPosition(pinger_pos[0], pinger_pos[1], global_vars.depth_sensor_reading())
         else:
-            return CartesianPosition(pinger_pos[0], pinger_pos[1], global_vars.pinger_position.z)
+            return CartesianPosition(pinger_pos[0], pinger_pos[1], global_vars.depth_sensor_reading())
 
     def write_frame(self, frame):
         return {}

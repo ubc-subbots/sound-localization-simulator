@@ -88,7 +88,7 @@ class MUSIC:
         else:
             param1_vals = np.arange(0, np.pi/2+self.resolution, self.resolution)
             # shift to lower hemisphere if we are above pinger
-            if global_vars.pinger_position.z < 0:
+            if global_vars.depth_sensor_reading() < 0:
                 param1_vals += np.pi/2
         
         max_j_music = 0
