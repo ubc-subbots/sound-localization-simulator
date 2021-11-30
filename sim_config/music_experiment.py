@@ -48,7 +48,7 @@ class music_experiment(Experiment):
             InputGenerationStage(measurement_period=20e-3, duty_cycle=4e-3)
         )
 
-        self.sigma = 0.05
+        self.sigma = 0.01
         self.simulation_chain.add_component(
             GaussianNoise(mu=0, sigma=self.sigma)
         )
@@ -58,15 +58,15 @@ class music_experiment(Experiment):
             IdealADCStage(num_bits=num_bits, quantization_method=QuantizationType.midtread)
         )
 
-        num_samples = int(
-            10 * (global_vars.sampling_frequency / global_vars.signal_frequency))  # sample 10 cycles of the wave
-        threshold = 0.5 * (2 ** (num_bits-1))
-        self.simulation_chain.add_component(
-            ThresholdCaptureTrigger(num_samples=num_samples, threshold=threshold)
-        )
+        # num_samples = int(
+        #     10 * (global_vars.sampling_frequency / global_vars.signal_frequency))  # sample 10 cycles of the wave
+        # threshold = 0.1 * (2 ** (num_bits-1))
+        # self.simulation_chain.add_component(
+        #     ThresholdCaptureTrigger(num_samples=num_samples, threshold=threshold)
+        # )
 
         self.simulation_chain.add_component(
-            MUSIC(resolution=np.pi/50, visualize_jmusic=True, xy_halfplane=True)
+            MUSIC(resolution=np.pi/50, visualize_jmusic=False, xy_halfplane=True)
         )
 
     # Execute here
