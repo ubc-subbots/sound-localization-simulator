@@ -8,7 +8,7 @@ from sim_utils.output_utils import initialize_logger
 
 # create logger object for this module
 
-class Hydrophone_Response_Stage:
+class HydrophoneResponseStage:
 
     def __init__(self, bottom_density, bottom_soundspeed, pool_depth, tx_depth,
                 surface= None, bottom_absorption= 0, bottom_roughness= 0, 

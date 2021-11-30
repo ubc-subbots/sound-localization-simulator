@@ -10,6 +10,17 @@ from importlib import import_module
 from sim_utils import output_utils
 import global_vars
 
+def extract_experiment_class_name(experiment_name):
+    exp_module_name = experiment_name.split(".")[-1]
+    
+    # split on underscores
+    class_name_list = exp_module_name.split("_")
+    # capitalize first letter for CamelCase
+    class_name_list = [name.capitalize() for name in class_name_list]
+
+    # return CamelCase experiment name
+    return "".join(class_name_list)
+
 if __name__ == "__main__":
     ##################################################
     # Process Command Line Args
@@ -48,7 +59,8 @@ if __name__ == "__main__":
     experiment_module = import_module(args.experiment_name)
 
     # Import the experiment class
-    Experiment_class = getattr(experiment_module, args.experiment_name)
+    class_name = extract_experiment_class_name(args.experiment_name)
+    Experiment_class = getattr(experiment_module, class_name)
     # create logger object for this module
     logger = output_utils.initialize_logger(__name__)
 
