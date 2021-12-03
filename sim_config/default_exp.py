@@ -1,6 +1,7 @@
 from components.chain import Chain
 
 import numpy as np
+from pympler import asizeof
 import jsonpickle
 import pprint
 import global_vars
@@ -43,8 +44,9 @@ class DefaultExp(Experiment):
 
         self.simulation_chain = Chain(sim_signal)
 
+        # 20ms assumes 13ms to reach the pinger and then ~2 pinger periods
         self.simulation_chain.add_component(
-            InputGenerationStage(measurement_period=2, duty_cycle=0.05)
+            InputGenerationStage(measurement_period=20e-3, duty_cycle=0.05) 
         )
 
         self.sigma = 0.01
@@ -93,4 +95,6 @@ if __name__ == '__main__':
     experiment = default_exp()
     exp_results = experiment.apply()
     pprint.pprint(experiment.frame, sort_dicts=False)
+    print(asizeof.asizeof(experiment.frame['InputGenerationStage']))
+    experiment.dump()
     experiment.display_results()
