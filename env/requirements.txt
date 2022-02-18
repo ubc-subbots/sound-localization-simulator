@@ -9,7 +9,7 @@ certifi==2020.6.20
 colorama==0.4.1
 cycler==0.10.0
 decorator==4.4.0
-dicttoxml==1.7.4
+dicttoxml>=1.7.4
 distlib==0.3.1
 filelock==3.0.12
 future==0.18.2
@@ -25,7 +25,7 @@ lazy-object-proxy==1.4.1
 MarkupSafe==1.1.1
 matplotlib==3.3.2
 mccabe==0.6.1
-numpy==1.19.4
+numpy>=1.19.4
 packaging==20.4
 pandas==1.2.1
 parso==0.5.0
@@ -41,7 +41,7 @@ pyparsing==2.4.0
 python-dateutil==2.8.0
 pytz==2020.5
 PyYAML==5.4.1
-scipy==1.5.3
+scipy>=1.5.3
 six==1.12.0
 sortedcontainers==2.2.2
 tornado==6.1
@@ -52,5 +52,5 @@ utm==0.7.0
 virtualenv==20.0.31
 wcwidth==0.1.7
 wrapt==1.11.2
-xmltodict==0.12.0
+xmltodict>=0.12.0
 zipp==3.1.0
