@@ -1,4 +1,3 @@
-#hello
 
 '''
 UBC Subbots
