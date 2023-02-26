@@ -36,6 +36,10 @@ class DefaultExp(Experiment):
         ]
 
         global_vars.pinger_position = CylindricalPosition(10, 0, 10)
+
+        #this must be modified globally to actually change how the simulator runs
+        global_vars.initial_guess=PolarPosition(10, np.pi)
+
         # create initial simulation signal
 
         sim_signal = None
@@ -65,8 +69,11 @@ class DefaultExp(Experiment):
         self.simulation_chain.add_component(
             CrossCorrelationStage()
         )
+        
+        #this will only be cosmetic, the global variable must be modified to changew how the simulator runs
+        self.initial_guess = global_vars.initial_guess
 
-        self.initial_guess = PolarPosition(10, np.pi)
+
         self.simulation_chain.add_component(
             NLSPositionCalc(optimization_type=OptimizationType.nelder_mead)
         )
