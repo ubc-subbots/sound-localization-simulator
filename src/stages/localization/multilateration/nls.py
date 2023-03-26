@@ -91,6 +91,9 @@ class NLSPositionCalc:
         # elif (self.optimization_type == OptimizationType.newton_gausss):
         #     pinger_pos = position_calc_utils.newton_gauss(get_squared_error_sum, 
         #                     self.initial_guess, args=args)
+        elif self.optimization_type == OptimizationType.angle_nls:
+            pinger_pos = localization_utils.angle_nls(get_squared_error_sum,
+                                                         args=args, radius = 10, resolution = 1000)
         else:
             raise ValueError("Optimization type must be of type OptimizationType. You inputted " +
                              str(self.optimization_type))

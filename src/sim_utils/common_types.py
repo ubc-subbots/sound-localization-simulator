@@ -19,6 +19,7 @@ class OptimizationType(Enum):
     nelder_mead = 0
     gradient_descent = 1
     newton_gauss = 2
+    angle_nls = 3
 
 ##################################################################
 # Position Constructs
