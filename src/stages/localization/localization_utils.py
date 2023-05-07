@@ -170,7 +170,7 @@ def angle_nls(func, args=(), radius=10, resolution = 1000):
 
     for i in range(resolution):
         #stepping phi from 0 to 2pi with resolution number of increments
-        params[1]=2*np.pi*float(i)/float(resolution)
+        params[1]=np.pi*float(i)/float(resolution)
         squareErrorList[i] = func(params, *args)
 
     minError = squareErrorList[0]
@@ -178,11 +178,18 @@ def angle_nls(func, args=(), radius=10, resolution = 1000):
     index = 0
     for i in range(resolution):
         if squareErrorList[i] < minError:
-            phi = 2*np.pi*float(i)/float(resolution)
+            phi = np.pi*float(i)/float(resolution)
             index = i
             minError = squareErrorList[i]
     
-    print("minError = " + str(minError) + "  Phi = " + str(phi) + " rads,   " + str(phi*180/(np.pi))+ " degrees")
+    #print("minError = " + str(minError) + "  Phi = " + str(phi) + " rads,   " + str(phi*180/(np.pi))+ " degrees")
+
+    #testing stuff
+    pinger = global_vars.pinger_position.phi*180/np.pi
+    pingerdistance = global_vars.pinger_position.r
+    phi1 = phi*180/(np.pi)
+
+    print("Pinger Distance = " + str(pingerdistance) + " meters,  Guess = " + str(radius) + " meters,   Error: " + str(100*abs(pinger-phi1)/180)+ "%")
     
     params[1] = phi
     

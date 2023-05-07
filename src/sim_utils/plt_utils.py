@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
+import matplotlib.lines as lines
 import numpy as np
-from sim_utils.common_types import cyl_to_cart, polar_to_cart2d
+from sim_utils.common_types import cyl_to_cart, polar_to_cart2d, CylindricalPosition
 import global_vars
 
 def plot_calculated_positions(position_list, initial_guess, sigma):
@@ -10,8 +11,15 @@ def plot_calculated_positions(position_list, initial_guess, sigma):
     '''
     hx = [cyl_to_cart(pos).x for pos in global_vars.hydrophone_positions]
     hy = [cyl_to_cart(pos).y for pos in global_vars.hydrophone_positions]
+    #x and y are 1 element lists
     x  = [polar_to_cart2d(pos).x for pos in position_list]
     y  = [polar_to_cart2d(pos).y for pos in position_list]
+    
+    #creating x and y values for phi at a large distance
+    position_list_far = [CylindricalPosition(100, position_list[0].phi, position_list[0].z)]
+    x1  = [polar_to_cart2d(pos).x for pos in position_list_far]
+    y1  = [polar_to_cart2d(pos).y for pos in position_list_far]
+
     px = cyl_to_cart(global_vars.pinger_position).x
     py = cyl_to_cart(global_vars.pinger_position).y
     gx = polar_to_cart2d(initial_guess).x
@@ -25,14 +33,22 @@ def plot_calculated_positions(position_list, initial_guess, sigma):
     ax1.set_title("Hydrophone XY Distribution")
     f.colorbar(h[3], ax=ax1)
 
-    h = ax2.hist2d(x, y, density=True, range=[[-50, 50], [-50, 50]], bins=40)
+    #h = ax2.hist2d([40], [40], density=True, range=[[-50, 50], [-50, 50]], bins=40)
     ax2.scatter(hx, hy, label="Hydrophones", c = 'white')
     ax2.scatter(px, py, label="Pinger", c='orange')
-    ax2.scatter(gx, gy, label="Initial Guess", c = 'red')
+    #2d has no initial guess
+    #ax2.scatter(gx, gy, label="Initial Guess", c = 'red')
+    ax2.add_line(lines.Line2D([0, x1[0]], [0, y1[0]], alpha = 0.5, linewidth=5.0, label="1D Localization Angle Estimate", c="yellow"))
     ax2.set_xlabel("x (m)")
     ax2.set_ylabel("y (m)")
     sigma_string = r'$\sigma = $' + str(round(sigma, 2))
     ax2.set_title("Distribution for Pinger Position Results %s" % sigma_string)
+
+    #changes to make up for removing yellow box
+    ax2.set_xlim(left=-50, right=50)
+    ax2.set_ylim(bottom=-50, top=50)
+    ax2.set_facecolor("#440154")
+
     ax2.legend(loc='lower left')
     f.colorbar(h[3], ax=ax2)
 

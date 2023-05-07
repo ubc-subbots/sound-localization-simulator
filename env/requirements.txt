@@ -4,6 +4,6 @@ jsonpickle==2.0.0
 matplotlib==3.3.2
 numpy>=1.19.4
 pickleshare==0.7.5
-scipy>=1.5.3
+scipy==1.6.2
 virtualenv==20.0.31
 xmltodict>=0.12.0

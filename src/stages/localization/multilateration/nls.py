@@ -33,7 +33,7 @@ class NLSPositionCalc:
     https://github.com/ubc-subbots/sound-localization-simulator/blob/master/docs/Position_Calculation_Algorithms.pdf
     '''
 
-    def __init__(self, optimization_type, guess_at_init=True):
+    def __init__(self, optimization_type, guess_at_init=True, radiusGuess=10):
         '''
         @brief class constructor
 
@@ -52,6 +52,7 @@ class NLSPositionCalc:
         self.id = "NLS"
         self.optimization_type = optimization_type
         self.guess_at_init = guess_at_init
+        self.radiusGuess = radiusGuess
         if guess_at_init:
             self.initial_guess = global_vars.initial_guess
             
@@ -93,7 +94,7 @@ class NLSPositionCalc:
         #                     self.initial_guess, args=args)
         elif self.optimization_type == OptimizationType.angle_nls:
             pinger_pos = localization_utils.angle_nls(get_squared_error_sum,
-                                                         args=args, radius = 10, resolution = 1000)
+                                                         args=args, radius = self.radiusGuess, resolution = 250)
         else:
             raise ValueError("Optimization type must be of type OptimizationType. You inputted " +
                              str(self.optimization_type))

@@ -72,10 +72,18 @@ if __name__ == "__main__":
     # Instantiate the class. Try loading from a previous run.
     # experiment = Experiment_class.load()  # type: Experiment
     # if experiment is None:
-    experiment = Experiment_class()
 
-    # Run
-    results = experiment.apply()
-    experiment.display_results()
+    for indexGuess in range(6):
+        for indexPinger in range(8):
+            print("")
+            print("Pinger at " + str(10*indexPinger+5))
+            print("")
+            for iteration in range(1,6):
+                experiment = Experiment_class(radiusPinger=(10*indexPinger + 5), radiusGuess=(10*indexGuess + 25))
 
-    experiment.dump()
+                # Run
+                results = experiment.apply()
+                #experiment.display_results()
+
+                experiment.dump()
+    
