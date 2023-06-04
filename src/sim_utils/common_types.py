@@ -21,6 +21,12 @@ class OptimizationType(Enum):
     newton_gauss = 2
     angle_nls = 3
 
+class InputType(Enum):
+    csv = 1
+    shared_memory = 2
+    simulation = 3
+    socket = 4
+
 ##################################################################
 # Position Constructs
 ##################################################################

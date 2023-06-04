@@ -3,6 +3,8 @@
 #
 #  Input signals are fed into the component chain and propagated through it
 #  in order to generate the simulation frame output data.
+import csv, os
+
 import numpy as np
 from scipy import signal
 from collections import namedtuple
@@ -19,6 +21,8 @@ class InputGeneration:
         self.hydrophone_position = hydrophone_position
         self.measurement_period = measurement_period
         self.duty_cycle = duty_cycle
+        self.listofarrays = []
+        self.counter = 0
 
     def _square_wave(self, sampling_frequency, square_wave_frequency,
                       measurement_period, duty_cycle):
@@ -93,26 +97,60 @@ class InputGeneration:
                 <expected number of leading zeros of the closest hydrophone> less than expected.
                 This is to remove leading zeros that do not affect analysis.
         """
-        distance = distance_3Dpoints(self.hydrophone_position, global_vars.pinger_position)
-        
-        propogation_time = distance / global_vars.speed_of_sound
-        leading_zeros_t = propogation_time
+        print(global_vars.input_type) 
+        if global_vars.input_type == InputType.simulation:
+            distance = distance_3Dpoints(self.hydrophone_position, global_vars.pinger_position)
+            
+            propogation_time = distance / global_vars.speed_of_sound
+            leading_zeros_t = propogation_time
 
-        sine_wave = self._sine_wave(
-            global_vars.continuous_sampling_frequency,
-            global_vars.signal_frequency,
-            self.measurement_period - leading_zeros_t,
-            0
-        )
+            sine_wave = self._sine_wave(
+                global_vars.continuous_sampling_frequency,
+                global_vars.signal_frequency,
+                self.measurement_period - leading_zeros_t,
+                0
+            )
 
-        sine_wave = self._add_leading_zeros(sine_wave, leading_zeros_t)
+            sine_wave = self._add_leading_zeros(sine_wave, leading_zeros_t)
 
-        carrier_wave = self._square_wave(
-            global_vars.continuous_sampling_frequency,
-            global_vars.carrier_frequency,
-            self.measurement_period - leading_zeros_t, 
-            self.duty_cycle
-        )
-        carrier_wave = self._add_leading_zeros(carrier_wave, leading_zeros_t)
+            carrier_wave = self._square_wave(
+                global_vars.continuous_sampling_frequency,
+                global_vars.carrier_frequency,
+                self.measurement_period - leading_zeros_t, 
+                self.duty_cycle
+            )
+            carrier_wave = self._add_leading_zeros(carrier_wave, leading_zeros_t)
 
-        return sine_wave * carrier_wave
+            return sine_wave * carrier_wave
+
+        # global_vars.DataList.append(outputCSV)
+
+        # if(global_vars.counter == 4):
+
+        #     with open('C:\\Users\\kiera\\OneDrive\\Documents\\SubBots\\ProjectDolphin\\MinimalSimulatorSystem\\src\\sim_utils\\MyFile.csv', 'w') as csv_file:
+        #         csv_writer = csv.writer(csv_file, delimiter=',', lineterminator="\r")
+        #         csv_writer.writerows(global_vars.DataList)
+        #         #csv_writer.writerows([[1,2,3,4],[5,6,8,3],[26,3,5,7]])
+            
+        #         print("Finished")
+        #         print( global_vars.DataList)
+        #         csv_file.close()
+        # else:
+        #     global_vars.counter = global_vars.counter + 1
+        #     print(global_vars.counter)
+
+        # with open('C:\\Users\\kiera\\OneDrive\\Documents\\SubBots\\ProjectDolphin\\MinimalSimulatorSystem\\src\\sim_utils\\MyFile.csv') as csv_file:
+        #     csv_reader = csv.reader(csv_file, delimiter=',', lineterminator="\r")
+        #     line_count = 0
+        #     for row in csv_reader:
+        #         global_vars.DataList.append(row)
+        #         line_count += 1
+        #     print(f'Processed {line_count} lines.')
+
+        elif global_vars.input_type == InputType.csv:
+            global_vars.nth_hydrophone += 1
+            print(global_vars.nth_hydrophone)
+            print(global_vars.hydrophone_signal_list[global_vars.nth_hydrophone - 1])
+
+
+            return global_vars.hydrophone_signal_list[global_vars.nth_hydrophone - 1]

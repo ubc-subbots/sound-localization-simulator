@@ -9,7 +9,10 @@ import argparse
 from datetime import datetime
 from importlib import import_module
 from sim_utils import output_utils
+from sim_utils.common_types import *
 import global_vars
+import csv
+import numpy
 
 def extract_experiment_class_name(experiment_name):
     exp_module_name = experiment_name.split(".")[-1]
@@ -40,6 +43,10 @@ if __name__ == "__main__":
                         help="The level of verbosity with which the simulator will dump logging information")
     parser.add_argument('-f', '--logfile_name', type=str,
                         help="The log file name used for the simulation run. If not passed, the experiment name is used")
+    # parser.add_argument('-i', '--input_type', default='simulation', type=str,
+    #                     help="Specify the type of input source for the hydrophone data: \nThe Options are:\nglobal_vars.InputSource.simulation\nglobal_vars.InputSource.csv\nglobal_vars.InputSource.shared_memory\nglobal_vars.InputSource.socket")
+    parser.add_argument('-csv','--csv_filepath', type=str,
+                        help="The file name for csv containing hydrophone data to use")
 
     args = parser.parse_args()
     global_vars.num_iterations = args.num_iterations
@@ -65,6 +72,19 @@ if __name__ == "__main__":
     # create logger object for this module
     logger = output_utils.initialize_logger(__name__)
 
+    if args.csv_filepath:
+        global_vars.input_type = InputType.csv
+        with open(args.csv_filepath) as csv_file:
+            csv_reader = csv.reader(csv_file, delimiter=',', lineterminator="\r")
+            line_count = 0
+            for row in csv_reader:
+                global_vars.hydrophone_signal_list.append(numpy.asarray(list(map(float, row))))
+                line_count += 1
+            print(f'Processed {line_count} lines.')
+    else:
+        print("no csv file provided: simulating data")
+
+
     ##################################################
     # main Simulation Tasks
     ##################################################
@@ -73,17 +93,12 @@ if __name__ == "__main__":
     # experiment = Experiment_class.load()  # type: Experiment
     # if experiment is None:
 
-    for indexGuess in range(6):
-        for indexPinger in range(8):
-            print("")
-            print("Pinger at " + str(10*indexPinger+5))
-            print("")
-            for iteration in range(1,6):
-                experiment = Experiment_class(radiusPinger=(10*indexPinger + 5), radiusGuess=(10*indexGuess + 25))
+    
+    experiment = Experiment_class(radiusPinger=(25), radiusGuess=(25))
 
-                # Run
-                results = experiment.apply()
-                #experiment.display_results()
+    # Run
+    results = experiment.apply()
+    experiment.display_results()
 
-                experiment.dump()
+    experiment.dump()
     

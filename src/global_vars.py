@@ -1,5 +1,6 @@
 from sim_utils.common_types import *
 from numpy.random import rand
+from enum import Enum
 
 ##############################################
 # Procedural Parameters
@@ -42,3 +43,11 @@ attenuation_coeff = 0.02 #TODO: add details in the description here
 depth_sensor_uncertainty = 2e-3 # m
 def depth_sensor_reading():
     return pinger_position.z + depth_sensor_uncertainty*rand()
+
+hydrophone_signal_list = []
+nth_hydrophone = 0
+
+input_type = InputType.simulation
+
+DataList =[]
+counter = 0
