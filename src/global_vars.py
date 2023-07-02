@@ -44,10 +44,9 @@ depth_sensor_uncertainty = 2e-3 # m
 def depth_sensor_reading():
     return pinger_position.z + depth_sensor_uncertainty*rand()
 
+#### CSV file read to this list ####
 hydrophone_signal_list = []
-nth_hydrophone = 0
+nth_hydrophone = -1 # incremented before returning so has to be started at -1 
 
+# Specifies what type of input is used for a given run
 input_type = InputType.simulation
-
-DataList =[]
-counter = 0

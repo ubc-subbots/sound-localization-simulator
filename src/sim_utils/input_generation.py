@@ -97,7 +97,8 @@ class InputGeneration:
                 <expected number of leading zeros of the closest hydrophone> less than expected.
                 This is to remove leading zeros that do not affect analysis.
         """
-        print(global_vars.input_type) 
+
+        # If no CSV was specified, generate the simulated data normally
         if global_vars.input_type == InputType.simulation:
             distance = distance_3Dpoints(self.hydrophone_position, global_vars.pinger_position)
             
@@ -119,38 +120,13 @@ class InputGeneration:
                 self.measurement_period - leading_zeros_t, 
                 self.duty_cycle
             )
+
             carrier_wave = self._add_leading_zeros(carrier_wave, leading_zeros_t)
 
             return sine_wave * carrier_wave
 
-        # global_vars.DataList.append(outputCSV)
-
-        # if(global_vars.counter == 4):
-
-        #     with open('C:\\Users\\kiera\\OneDrive\\Documents\\SubBots\\ProjectDolphin\\MinimalSimulatorSystem\\src\\sim_utils\\MyFile.csv', 'w') as csv_file:
-        #         csv_writer = csv.writer(csv_file, delimiter=',', lineterminator="\r")
-        #         csv_writer.writerows(global_vars.DataList)
-        #         #csv_writer.writerows([[1,2,3,4],[5,6,8,3],[26,3,5,7]])
-            
-        #         print("Finished")
-        #         print( global_vars.DataList)
-        #         csv_file.close()
-        # else:
-        #     global_vars.counter = global_vars.counter + 1
-        #     print(global_vars.counter)
-
-        # with open('C:\\Users\\kiera\\OneDrive\\Documents\\SubBots\\ProjectDolphin\\MinimalSimulatorSystem\\src\\sim_utils\\MyFile.csv') as csv_file:
-        #     csv_reader = csv.reader(csv_file, delimiter=',', lineterminator="\r")
-        #     line_count = 0
-        #     for row in csv_reader:
-        #         global_vars.DataList.append(row)
-        #         line_count += 1
-        #     print(f'Processed {line_count} lines.')
-
+        # If a CSV was specified, use the data from it as the generated input instead
         elif global_vars.input_type == InputType.csv:
             global_vars.nth_hydrophone += 1
-            print(global_vars.nth_hydrophone)
-            print(global_vars.hydrophone_signal_list[global_vars.nth_hydrophone - 1])
 
-
-            return global_vars.hydrophone_signal_list[global_vars.nth_hydrophone - 1]
+            return global_vars.hydrophone_signal_list[global_vars.nth_hydrophone]
