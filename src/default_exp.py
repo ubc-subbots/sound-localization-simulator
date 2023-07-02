@@ -22,11 +22,12 @@ class DefaultExp(Experiment):
     frames = None
 
     # Create simulation chain
-    def __init__(self, radiusPinger = 10, radiusGuess = 10):
-        self.logger = initialize_logger(__name__)
-        self.results = []  # Position list
-        self.radiusPinger = radiusPinger
-        self.radiusGuess = radiusGuess
+    def __init__(self, pingerRadius = 10, pingerAngle = np.pi/2, guessRadius = 10):
+        self.logger       = initialize_logger(__name__)
+        self.results      = []  # Position list
+        self.pingerRadius = pingerRadius
+        self.pingerAngle  = pingerAngle
+        self.guessRadius  = guessRadius
 
         # Modify global constants
         global_vars.hydrophone_positions = [
@@ -37,10 +38,11 @@ class DefaultExp(Experiment):
             CylindricalPosition(1.2e-2, -np.pi+np.pi/10, 1.2e-2),
         ]
 
-        global_vars.pinger_position = CylindricalPosition(self.radiusPinger, 3*np.pi/4, 10)
+        global_vars.pinger_position = CylindricalPosition(self.pingerRadius, self.pingerAngle, 10)
 
-        #this must be modified globally to actually change how the simulator runs
-        global_vars.initial_guess=PolarPosition(10, np.pi)
+        # this must be modified globally to actually change how the simulator runs
+        # guessAngle is iterated through using NLS position calc so a dummy value is used here
+        global_vars.initial_guess=PolarPosition(self.guessRadius, np.pi)
 
         # create initial simulation signal
 
@@ -78,7 +80,7 @@ class DefaultExp(Experiment):
 
 
         self.simulation_chain.add_component(
-            NLSPositionCalc(optimization_type=OptimizationType.angle_nls, radiusGuess=self.radiusGuess)
+            NLSPositionCalc(optimization_type=OptimizationType.angle_nls, radiusGuess=self.guessRadius)
         )
 
     # Execute here
@@ -99,6 +101,6 @@ class DefaultExp(Experiment):
 
 
 if __name__ == '__main__':
-    experiment = DefaultExp(radiusPinger=(25), radiusGuess=(25))
+    experiment = DefaultExp(pingerRadius=(25), guessRadius=(25))
     exp_results = experiment.apply()
     experiment.display_results()
