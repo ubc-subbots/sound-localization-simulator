@@ -13,6 +13,7 @@ from sim_utils.common_types import *
 import global_vars
 import csv
 import numpy
+import random
 
 def extract_experiment_class_name(experiment_name):
     exp_module_name = experiment_name.split(".")[-1]
@@ -72,6 +73,7 @@ if __name__ == "__main__":
     # create logger object for this module
     logger = output_utils.initialize_logger(__name__)
 
+    # If a CSV file is specified, read all lines into hydrophone signal list
     if args.csv_filepath:
         global_vars.input_type = InputType.csv
         with open(args.csv_filepath) as csv_file:
@@ -80,9 +82,10 @@ if __name__ == "__main__":
             for row in csv_reader:
                 global_vars.hydrophone_signal_list.append(numpy.asarray(list(map(float, row))))
                 line_count += 1
-            print(f'Processed {line_count} lines.')
+            print(f'Processed {line_count} lines from CSV.')
+    # Otherwise, simulate the data
     else:
-        print("no csv file provided: simulating data")
+        print("No CSV file provided, simulating data.")
 
 
     ##################################################
@@ -94,11 +97,53 @@ if __name__ == "__main__":
     # if experiment is None:
 
     
-    experiment = Experiment_class(radiusPinger=(25), radiusGuess=(25))
+    # experiment = Experiment_class(radiusPinger=(25), radiusGuess=(25))
 
-    # Run
-    results = experiment.apply()
-    experiment.display_results()
+    # # Run
+    # results = experiment.apply()
+    # experiment.display_results()
 
-    experiment.dump()
-    
+    # experiment.dump()
+
+    # for pinger_radius in [0.11, 0.5, 1, 3]:
+    #     for pinger_angle in [np.pi/5, np.pi/3, 3*np.pi/4]:
+    #         for guess_radius in [0.1, 0.51, 1.4, 2]:
+            
+    #             experiment = Experiment_class(pingerRadius=(pinger_radius), pingerAngle=(pinger_angle), guessRadius=(guess_radius))
+
+    #             # Run
+    #             results = experiment.apply()
+    #             #experiment.display_results()
+
+    #             experiment.dump()
+    #         print("")
+    #     print("")
+    # print("")
+            
+    # for pinger_radius in [60]:
+    #     for pinger_angle in [3*np.pi/4]:
+    #         for guess_radius in [49,51]:
+            
+    #             experiment = Experiment_class(pingerRadius=(pinger_radius), pingerAngle=(pinger_angle), guessRadius=(guess_radius))
+
+    #             # Run
+    #             results = experiment.apply()
+    #             #experiment.display_results()
+
+    #             experiment.dump()
+    #         print("")
+    #     print("")
+    # print("")
+
+    for pinger_radius in random.sample(range(1, 80), 5):
+        for pinger_angle in random.sample(range(0, 100), 3):
+            
+            experiment = Experiment_class(pingerRadius=(pinger_radius), pingerAngle=(np.pi/100*pinger_angle), guessRadius=(10))
+
+            # Run
+            results = experiment.apply()
+            #experiment.display_results()
+
+            experiment.dump()
+        print("")
+    print("")
