@@ -136,7 +136,7 @@ def get_squared_error_sum(pinger_pos, is_polar, *hydrophone_tdoas):
     r = pinger_pos[0] if is_polar else np.sqrt(pinger_pos[0] ** 2 + pinger_pos[1] ** 2)
 
     squared_error_sum = sum([
-        (actual_delta_t - expected_delta_t) ** 2 + 1e6 * np.heaviside(r - 50, 0.5)
+        (actual_delta_t - expected_delta_t) ** 2 #+ 1e6 * np.heaviside(r - 50, 0.5) # Used as boundary condition for when pool walls are reached, we think??
         for (actual_delta_t, expected_delta_t) in zip(hydrophone_tdoas, expected_delta_t_vals)
     ])
 
