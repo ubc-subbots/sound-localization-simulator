@@ -5,8 +5,10 @@ Contains a variety of helper functions to be used across all position calculatio
 @date Oct 21, 2020
 '''
 from math import floor
+import time
 import numpy as np
 from scipy import optimize
+from itertools import chain
 #from simulator_main import sim_config as global_vars
 import global_vars
 from sim_utils.common_types import *
@@ -164,34 +166,56 @@ def angle_nls(func, args=(), radius=10, resolution = 1000):
     #NOW THAT YOU GOT A GRADIENT SAMPLING SCRIPT, THIS IS THE NEXT BIG VISUALIZATION TOOL
     #params = starting_params
     params=np.zeros(2)
-    params[0]=radius
 
-    squareErrorList = np.zeros(resolution)
+    minMinError = 1e6
+    bestPhi = 0
+    startTime = time.time()
 
-    for i in range(resolution):
-        #stepping phi from 0 to 2pi with resolution number of increments
-        params[1]=np.pi*float(i)/float(resolution)
-        squareErrorList[i] = func(params, *args)
-
-    minError = squareErrorList[0]
-    phi = 0
-    index = 0
-    for i in range(resolution):
-        if squareErrorList[i] < minError:
-            phi = np.pi*float(i)/float(resolution)
-            index = i
-            minError = squareErrorList[i]
+    # Large range for high accuracy (~0.8s of calculations on regular laptop)
+    radiusRangeThorough = [x/10 for x in range(10,40)] + [x/5 for x in range(20,50)] + list(range(10,20)) + [x*2 for x in range(10,20)] + [x*4 for x in range(10,20)]
     
-    #print("minError = " + str(minError) + "  Phi = " + str(phi) + " rads,   " + str(phi*180/(np.pi))+ " degrees")
+    # Smaller range for higher speed (~0.14s of calculations on regular laptop)
+    # Note that the accuracy is not very affected - therefore better to use smaller range
+    radiusRangeEcon =  [x/2 for x in range(2,8)] + [x*2 for x in range(2,5)] + [x*5 for x in range(2,4)] + [x*10 for x in range(2,4)] + [x*20 for x in range(2,4)]
 
-    #testing stuff
-    pinger = global_vars.pinger_position.phi*180/np.pi
-    pingerdistance = global_vars.pinger_position.r
-    phi1 = phi*180/(np.pi)
+    # Step through predetermined list of radius guesses, with higher granularity at lower values
+    for radiusIndex in radiusRangeEcon:
+        params[0]=radiusIndex
 
-    print("Pinger Distance = " + str(pingerdistance) + " meters,  Guess = " + str(radius) + " meters,   Error: " + str(100*abs(pinger-phi1)/180)+ "%")
-    
-    params[1] = phi
+        squareErrorList = np.zeros(resolution)
+
+        for i in range(resolution):
+            #stepping phi from 0 to 2pi with resolution number of increments
+            params[1]=np.pi*float(i)/float(resolution)
+            squareErrorList[i] = func(params, *args)
+
+        minError = squareErrorList[0]
+        phi = 0
+        for i in range(resolution):
+            if squareErrorList[i] < minError:
+                phi = np.pi*float(i)/float(resolution)
+                minError = squareErrorList[i]
+        
+        #print("minError = " + str(minError) + "  Phi = " + str(phi) + " rads,   " + str(phi*180/(np.pi))+ " degrees")
+
+        #testing stuff
+        pinger = global_vars.pinger_position.phi*180/np.pi
+        pingerdistance = global_vars.pinger_position.r
+        phi1 = phi*180/(np.pi)
+
+        #print("Pinger Distance = " + str(pingerdistance)  +" meters, Pinger Angle = " + str(pinger) + " degrees,  Guess Distance = " + str(radius) + " meters,   Angle Error: " + str(100*abs(pinger-phi1)/180)+ "% Min NLS Error: " + str(minError))
+        
+        if(minError < minMinError):
+            minMinError = minError
+            bestPhi = phi
+            
+    # Calculate time calculations took (for testing purposes)
+    endTime = time.time()
+    print("it took: " + str(endTime-startTime) + "s")
+
+    # Finalize best angle found
+    params[1] = bestPhi
+    print("Pinger Distance = " + str(pingerdistance)  +" meters, Pinger Angle = " + str(pinger) + " degrees, Calculated Angle: " + str(bestPhi * 180/np.pi) + " degrees, Angle Error: " + str(100*abs(pinger-bestPhi*180/(np.pi))/180)+ "%")
     
     return params
 
