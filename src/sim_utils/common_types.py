@@ -22,6 +22,9 @@ class OptimizationType(Enum):
     angle_nls = 3
 
 class InputType(Enum):
+    '''
+    enum used to specify input type
+    '''
     csv = 1
     shared_memory = 2
     simulation = 3
