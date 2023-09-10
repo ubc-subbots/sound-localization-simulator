@@ -50,3 +50,5 @@ nth_hydrophone = -1 # incremented before returning so has to be started at -1
 
 # Specifies what type of input is used for a given run
 input_type = InputType.simulation
+
+error_list = []

@@ -215,7 +215,12 @@ def angle_nls(func, args=(), radius=10, resolution = 1000):
 
     # Finalize best angle found
     params[1] = bestPhi
-    print("Pinger Distance = " + str(pingerdistance)  +" meters, Pinger Angle = " + str(pinger) + " degrees, Calculated Angle: " + str(bestPhi * 180/np.pi) + " degrees, Angle Error: " + str(100*abs(pinger-bestPhi*180/(np.pi))/180)+ "%")
+
+    error = 100*abs(pinger-bestPhi*180/(np.pi))/180
+
+    global_vars.error_list.append(error)
+
+    print("Pinger Distance = " + str(pingerdistance)  +" meters, Pinger Angle = " + str(pinger) + " degrees, Calculated Angle: " + str(bestPhi * 180/np.pi) + " degrees, Angle Error: " + str(error)+ "%")
     
     return params
 

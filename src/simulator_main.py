@@ -135,8 +135,8 @@ if __name__ == "__main__":
     #     print("")
     # print("")
 
-    for pinger_radius in random.sample(range(1, 80), 5):
-        for pinger_angle in random.sample(range(0, 100), 3):
+    for pinger_radius in random.sample(range(1, 80), 8):
+        for pinger_angle in random.sample(range(0, 100), 5):
             
             experiment = Experiment_class(pingerRadius=(pinger_radius), pingerAngle=(np.pi/100*pinger_angle), guessRadius=(10))
 
@@ -147,3 +147,5 @@ if __name__ == "__main__":
             experiment.dump()
         print("")
     print("")
+
+    print("Average Error = " + str(sum(global_vars.error_list)/len(global_vars.error_list)) + "%")
