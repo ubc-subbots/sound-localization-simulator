@@ -61,6 +61,27 @@ class CrossCorrelationStage:
             for (component, input_sig) in zip(self.components, phase_analysis_inputs)
         )
 
+        PHASE_SHIFT_ERROR = False
+
+        if PHASE_SHIFT_ERROR:
+            # Optional phase shift error insertion
+            # Used to simulate variation in each hydrophones filters phase response
+            # due to imperfect part tolerances
+            
+            # TODO: (kross) parameterize optional phase shift error
+            phase_shift_error = 12
+            group_delay_error = phase_shift_error/360 * (1/global_vars.signal_frequency)
+
+            tdoa = list(tdoa)
+
+            # Add/Subtract worst-case group delay error at random
+            for group_delay_index in range(len(tdoa)):
+                direction = np.random.choice([1,-1])
+                tdoa[group_delay_index] = tdoa[group_delay_index] + direction*group_delay_error
+                print("Phase shift " + str(group_delay_index + 1) + " has error " + str(direction*phase_shift_error))
+
+            tdoa = tuple(tdoa)
+
         return tdoa
 
     def write_frame(self, frame):
